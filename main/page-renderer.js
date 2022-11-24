@@ -1,14 +1,23 @@
+
+
+var minify = require('html-minifier').minify;
+var minifyHTML = require('express-minify-html');
+var UglifyJS = require('uglify-js');
+var cleanCSS = require('clean-css');
+const fs = require('fs');
+
 class pageRenderer
 {
 
    renderPage(hpath,obj,htmlfile,webparr)
   {
+	
       return new Promise((resolve, reject) => {
           //compile ejs file and save to out folder
           global.app.render(hpath, {siteobj: obj}, function (err, html) {
 
               if (err) {
-              console.log(hpath + "  " +err);
+              //console.log(hpath + "  " +err);
                reject(err);
               }
               else {
@@ -36,7 +45,7 @@ class pageRenderer
                 });
 
 
-              var opath = "out/"+hpath;
+              var opath = global.pconfig.exportdir+hpath;
 
               fs.mkdirSync(opath, { recursive: true });
 
@@ -69,7 +78,7 @@ class pageRenderer
       	try
       	{
       			var obj = new Object();
-      			obj.urlpath = global.pconfig.LOCAL_URL+"/";
+      			obj.urlpath = global.pconfig.local_url+"/";
 
 
       			 res.render(surl, {siteobj: obj}, function (err, html) {

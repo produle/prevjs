@@ -2,6 +2,8 @@
 const imagemin = require('imagemin');
 const imageminWebp = require('imagemin-webp');
 
+const fs = require('fs');
+
 class imageOptimizer
 {
 

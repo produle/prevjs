@@ -5,15 +5,11 @@ const execFile = require('child_process').execFile;
 const execSync = require('child_process').execSync;
 const process = require('process');
 const {resolve} = require('path');
-const fs = require('fs')
-const dirTree = require("directory-tree");
+const fs = require('fs');
 
-var ncp = require('ncp').ncp;
+
 var minify = require('html-minifier').minify;
 var minifyHTML = require('express-minify-html');
-var UglifyJS = require('uglify-js');
-var cleanCSS = require('clean-css');
-
 
 
 //required variables
@@ -26,9 +22,6 @@ const pageRendererObj = new pageRenderer();
 const exportSite = require('./main/export.js')
 const exportSiteObj = new exportSite();
 
-const imageOptimizer = require('./main/image-optimize.js')
-const imageOptimizerObj = new imageOptimizer();
-
 const awsManager = require('./deploy/awsManager.js')
 const awsManagerObj = new awsManager();
 
@@ -38,6 +31,7 @@ DEFAULT_DIRS["DRAFTS"] = true;
 DEFAULT_DIRS["STATIC"] = true;
 DEFAULT_DIRS["PARTIALS"] = true;
 
+global.DEFAULT_DIRS = DEFAULT_DIRS;
 
 global.DEBUG = true;
 global.LOCAL_PREVIEW = false;
@@ -91,6 +85,12 @@ function processRecipe(recipe)
 			
 			global.pconfig.localpath = recipe.replace("recipe.json","");
 			
+			if(!global.pconfig.production_url)
+			global.pconfig.production_url = "http://localhost:"+global.pconfig.port;
+			
+			if(!global.pconfig.exportdir)
+			global.pconfig.exportdir = global.pconfig.localpath+"out/";
+			
 			global.app.use(express.static(global.pconfig.localpath+'STATIC'));
 						
 			//Set the view folder
@@ -115,7 +115,7 @@ function processRecipe(recipe)
 	
 }
 
-if(typeof process.argv[2] !== "undefined" && process.argv[2].includes("recipe.json"))
+if(process.argv.length == 3 && process.argv[2].includes("recipe.json"))
 {
 	
 	processRecipe(process.argv[2]);
@@ -124,27 +124,24 @@ if(typeof process.argv[2] !== "undefined" && process.argv[2].includes("recipe.js
 	global.app.listen(global.pconfig.port, () => {
 					
 	    global.LOCAL_PREVIEW = true;
-		global.pconfig.LOCAL_URL = "http://localhost:"+global.pconfig.port;
-		console.log("Local preview server running on URL: "+global.pconfig.LOCAL_URL);
+		global.pconfig.local_url = "http://localhost:"+global.pconfig.port;
+		console.log("Local preview server running on URL: "+global.pconfig.local_url);
 
 	});
 	
 }	
 
-
-if(typeof process.argv[2] !== "undefined" && process.argv[3] == "deploy")
+if(process.argv.length == 4 && process.argv[2].includes("recipe.json") && process.argv[3].includes("export"))
 {
+	processRecipe(process.argv[2]);
+	
+	exportSiteObj.export();
 
-}
+	
+	
+}	
 
 
-
-
-if(typeof process.argv[2] !== "undefined" && process.argv[2] == "export")
-{
-		   exportSiteObj.export();
-
-}
 
 
 //Declare routes
