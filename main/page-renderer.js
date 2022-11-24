@@ -14,11 +14,13 @@ class pageRenderer
 	
       return new Promise((resolve, reject) => {
           //compile ejs file and save to out folder
+		try
+		{
           global.app.render(hpath, {siteobj: obj}, function (err, html) {
 
               if (err) {
               //console.log(hpath + "  " +err);
-               reject(err);
+              resolve(true);
               }
               else {
 
@@ -61,6 +63,12 @@ class pageRenderer
 
               }
             });
+
+		}
+		catch(e)
+		{
+			reject(false);
+		}
 
       });
     }
