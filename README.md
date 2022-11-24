@@ -61,6 +61,9 @@ website/STATIC/favicon.ico => Website Favicon
 ## To preview your website in localhost
 ```node prevjs /path-to-my-website-folder/recipe.json```
 
+## To optimize and export your website for production
+```node prevjs /path-to-my-website-folder/recipe.json export```
+
 ## About EJS
 To know more about EJS and how to create websites with EJS templates check their website https://ejs.co/
 
