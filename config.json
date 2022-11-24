@@ -1,0 +1,29 @@
+{
+  "port": "3000",
+  "version": "1.0.0",
+  "description": "wowto-site",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "aws-sdk": "^2.1096.0",
+    "dotenv": "~4.0.0",
+    "lodash": "~4.17.10",
+    "axios": "^0.26.1",
+    "mailgun.js": "~5.1.0",
+    "form-data": "~4.0.0",
+    "html-minifier": "~4.0.0",
+    "directory-tree": "~3.3.1",
+    "uglify-js": "~3.17.4",
+    "ncp": "~2.0.0",
+    "clean-css": "~5.3.1",
+    "express-minify-html": "~0.12.0",
+    "imagemin": "~7.0.1",
+    "imagemin-webp": "~6.0.0"
+  }
+}
