@@ -94,15 +94,10 @@ class prevjs
 				if(!global.pconfig.exportdir)
 				global.pconfig.exportdir = global.pconfig.localpath+"out/";
 				
-				
-				
-							
+				global.app.use(express.static(global.pconfig.localpath+'STATIC'));
+						
 				//Set the view folder
 				global.app.set('views', global.pconfig.localpath);
-				
-	
-				global.app.use(express.static(global.pconfig.localpath+'STATIC'));
-				
 			}
 			else
 			{

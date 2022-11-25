@@ -91,8 +91,6 @@ class pageRenderer
       			var obj = new Object();
       			obj.urlpath = global.pconfig.local_url+"/";
 
-								global.app.use(express.static(global.pconfig.localpath+'STATIC'));
-
 
       			 res.render(surl, {siteobj: obj}, function (err, html) {
 
