@@ -6,6 +6,11 @@
 ## About prevjs
 PrevJS is a static website builder built on top of EJS templates. Its main goal is to build, optimize and deploy static websites with much less work.
 
+## Features
+* Create - Created for front-end people who want to code in plain html, js and css
+* Build - Export optimized for SEO with sitemap generation, webp conversion and minification
+* Deploy - Host to your CDN in a click. Supports AWS CloudFront for now  (Coming soon)
+
 ## How to use
 Before using prevjs it requires a website folder in your local system created with EJS pages and a recipe.json at its root. The website structure is bit different from conventional organization that is usually used in a regular EJS website. For more details on structure see below
 
