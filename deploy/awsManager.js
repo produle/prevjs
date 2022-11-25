@@ -1,48 +1,55 @@
 
 const AWS = require('aws-sdk');
+const path = require('path');
+const { exec } = require("child_process");
+const execFile = require('child_process').execFile;
+const execSync = require('child_process').execSync;
+const process = require('process');
+const {resolve} = require('path');
+const fs = require('fs');
+
+
+const prevUtils = require('../main/utils.js')
+const prevUtilsObj = new prevUtils();
+
 
  class awsManager
  {
-	 //CHANGE BELOW VARS BASED ON PRODUCTION OR DEV
-	
-
-	  AWS_ID = '';
-	  AWS_SECRET = '';
-	  AWS_BUCKET = '';
-	  AWS_REGION = '';
-	  AWS_CF_DISTRIBUTIONS = ""; //separate multiple distributions by commas - dist_id1,dist_id2
-
 		 //CHANGE BELOW VARS BASED ON PRODUCTION OR DEV
 	
-	  constructor()
-	  {
-		  AWS.config.update({
-			 accessKeyId: this.AWS_ID,
-			 secretAccessKey: this.AWS_SECRET,
-				region: this.AWS_REGION,
-				 httpOptions: {timeout: 1020000 }
-		 });
-
-			this.s3 = new AWS.S3({
-						accessKeyId: this.AWS_ID,
-						secretAccessKey: this.AWS_SECRET,
-						useAccelerateEndpoint: true
-		 });
-
-			 this.cfront = new AWS.CloudFront({
-						accessKeyId: this.AWS_ID,
-						secretAccessKey: this.AWS_SECRET
-		 });
-
-		}
-
-		 uploadSite()
+	
+		 deploy()
 		 {
+			if(!prevUtilsObj.emptyVar(global.pconfig.deploy.aws_id) || !prevUtilsObj.emptyVar(global.pconfig.deploy.aws_secret))
+			{
+				console.log("AWS ID and Secret Key is required in recipe.json for deployment");
+				process.exit()
+			}
+			
+			
+			 AWS.config.update({
+			 accessKeyId: global.pconfig.deploy.aws_id,
+			 secretAccessKey: global.pconfig.deploy.aws_secret,
+				region: global.pconfig.deploy.aws_region,
+				 httpOptions: {timeout: 1020000 }
+			 });
+	
+				this.s3 = new AWS.S3({
+							accessKeyId: global.pconfig.deploy.aws_id,
+							secretAccessKey: global.pconfig.deploy.aws_secret,
+							useAccelerateEndpoint: true
+			 });
+	
+				 
+				this.cfront = new AWS.CloudFront({
+							accessKeyId: global.pconfig.deploy.aws_id,
+							secretAccessKey: global.pconfig.deploy.aws_secret,
+			 });
 
 			 try {
-					var outfolder = "out";
+					var outfolder = global.pconfig.exportdir;
 
-					outfolder = resolve('out');
+					outfolder = resolve(global.pconfig.exportdir);
 
 
 					 var result = execSync("aws s3 sync "+outfolder+" s3://"+s3bucket+"/ --delete --acl public-read");

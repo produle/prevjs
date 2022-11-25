@@ -133,6 +133,7 @@ if(process.argv.length == 3 && process.argv[2].includes("recipe.json"))
 
 if(process.argv.length == 4 && process.argv[2].includes("recipe.json") && process.argv[3].includes("export"))
 {
+	console.log("Exporting site");
 	processRecipe(process.argv[2]);
 	
 	exportSiteObj.export();
@@ -141,6 +142,33 @@ if(process.argv.length == 4 && process.argv[2].includes("recipe.json") && proces
 	
 }	
 
+if(process.argv.length == 4 && process.argv[2].includes("recipe.json") && process.argv[3].includes("deploy"))
+{
+	console.log("Deploying site");
+	
+	processRecipe(process.argv[2]);
+	
+	if(global.pconfig.deploy && global.pconfig.deploy.type == "aws")
+	{
+		if (!fs.existsSync(global.pconfig.exportdir)) 
+		{
+			console.log("Output folder does not exist at " + global.pconfig.exportdir +" .Export site first before deploying.");
+			process.exit();
+    	}
+
+		awsManagerObj.deploy();
+	}
+	else
+	{
+		console.log("Deploy properties not found in recipe.json. Refer documentation.");
+		process.exit();
+       
+	}
+	
+
+	
+	
+}	
 
 
 
