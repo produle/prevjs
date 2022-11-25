@@ -1,13 +1,16 @@
 {
-  "name": "wowto-site",
-  "version": "1.0.0",
-  "description": "wowto-site",
+  "name": "prevjs",
+  "version": "0.0.3",
+  "description": "prevjs",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Produle",
+  "bin": {
+    "prevjs": "cli.js"
+  },
+  "license": "MIT",
   "dependencies": {
     "ejs": "^3.1.8",
     "express": "^4.18.1",
@@ -25,6 +28,17 @@
     "express-minify-html": "~0.12.0",
     "imagemin": "~7.0.1",
     "imagemin-webp": "~6.0.0",
-    "command-exists": "~1.2.9"
-  }
+    "command-exists": "~1.2.9",
+    "commander": "~9.4.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/produle/prevjs.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/produle/prevjs/issues"
+  },
+  "homepage": "https://github.com/produle/prevjs#readme"
 }

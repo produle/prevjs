@@ -1,5 +1,6 @@
 
-
+const express = require('express');
+const path = require('path');
 var minify = require('html-minifier').minify;
 var minifyHTML = require('express-minify-html');
 var UglifyJS = require('uglify-js');
@@ -76,6 +77,8 @@ class pageRenderer
 
     previewPage (req,res)
     {
+	
+		console.log(req.originalUrl);
 
 		if(req.originalUrl.includes(".ico"))
 		return;
@@ -87,6 +90,8 @@ class pageRenderer
       	{
       			var obj = new Object();
       			obj.urlpath = global.pconfig.local_url+"/";
+
+								global.app.use(express.static(global.pconfig.localpath+'STATIC'));
 
 
       			 res.render(surl, {siteobj: obj}, function (err, html) {
