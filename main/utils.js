@@ -3,18 +3,19 @@
 class prevUtils
 {
 
-    emptyVar(variable)
+    isEmpty(variable)
 	{
-		if(isNaN(variable))
-		return false;
+		
 		
 		if(variable == null)
-		return false;
+		return true;
 		
 		if(variable == undefined)
-		return false;
+		return true;
 		
 		if(variable.trim() == "")
+		return true;
+		
 		return false;
 		
 	}

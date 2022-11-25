@@ -8,6 +8,7 @@ const process = require('process');
 const {resolve} = require('path');
 const fs = require('fs');
 
+var commandExists = require('command-exists');
 
 const prevUtils = require('../main/utils.js')
 const prevUtilsObj = new prevUtils();
@@ -20,62 +21,60 @@ const prevUtilsObj = new prevUtils();
 	
 		 deploy()
 		 {
-			if(!prevUtilsObj.emptyVar(global.pconfig.deploy.aws_id) || !prevUtilsObj.emptyVar(global.pconfig.deploy.aws_secret))
+			
+			if(prevUtilsObj.isEmpty(global.pconfig.deploy.aws_bucket))
 			{
-				console.log("AWS ID and Secret Key is required in recipe.json for deployment");
-				process.exit()
+				console.log("AWS bucket name is required in recipe.json for deployment");
+				process.exit();
 			}
 			
-			
-			 AWS.config.update({
-			 accessKeyId: global.pconfig.deploy.aws_id,
-			 secretAccessKey: global.pconfig.deploy.aws_secret,
-				region: global.pconfig.deploy.aws_region,
-				 httpOptions: {timeout: 1020000 }
-			 });
-	
-				this.s3 = new AWS.S3({
-							accessKeyId: global.pconfig.deploy.aws_id,
-							secretAccessKey: global.pconfig.deploy.aws_secret,
-							useAccelerateEndpoint: true
-			 });
-	
-				 
-				this.cfront = new AWS.CloudFront({
-							accessKeyId: global.pconfig.deploy.aws_id,
-							secretAccessKey: global.pconfig.deploy.aws_secret,
-			 });
 
 			 try {
+				
+				commandExists('aws', function(err, commandExists) {
+ 
+    		if(commandExists) {
 					var outfolder = global.pconfig.exportdir;
 
 					outfolder = resolve(global.pconfig.exportdir);
 
 
-					 var result = execSync("aws s3 sync "+outfolder+" s3://"+s3bucket+"/ --delete --acl public-read");
+					 var result = execSync("aws s3 sync "+outfolder+" s3://"+global.pconfig.deploy.aws_bucket+"/ --delete --acl public-read");
 
 					console.log(result.toString());
-
-					var cfarr = cfdistributions.split(",");
-
-					if(cfarr.length > 0)
+					
+					if(!prevUtilsObj.isEmpty(global.pconfig.deploy.aws_cfdistributions))
 					{
-						for(var k=0;k<cfarr.length;k++)
+						var cfarr = global.pconfig.deploy.aws_cfdistributions.split(",");
+	
+						if(cfarr.length > 0)
 						{
-							 var res = execSync('aws cloudfront create-invalidation --distribution-id '+cfarr[k]+' --paths "/*"');
-							console.log(res.toString());
+							for(var k=0;k<cfarr.length;k++)
+							{
+								 var res = execSync('aws cloudfront create-invalidation --distribution-id '+cfarr[k]+' --paths "/*"');
+								console.log(res.toString());
+							}
 						}
 					}
 
 					process.exit();
+					
+				  }
+				  else
+				  {
+						console.log("aws CLI has to be installed and setup before calling deploy. Refer https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html.");
+				  }
+		
+				});
 
-				} catch (ex) {
+				} 
+				catch (ex) {
 					console.log(ex);
 					process.exit();
 
 				}
 
-
+			
 		 }
 
  };
