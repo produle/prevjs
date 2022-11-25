@@ -64,10 +64,13 @@ website/STATIC/favicon.ico => Website Favicon
 3. Install nodejs and npm if not already installed before step 2.
 
 ## To preview your website in localhost
-```node prevjs /path-to-my-website-folder/recipe.json```
+```node prev.js /path-to-my-website-folder/recipe.json```
 
 ## To optimize and export your website for production
-```node prevjs /path-to-my-website-folder/recipe.json export```
+```node prev.js /path-to-my-website-folder/recipe.json export```
+
+## To deploy your exported website in production (Requires aws command)
+```node prev.js /path-to-my-website-folder/recipe.json deploy```
 
 ## About EJS
 To know more about EJS and how to create websites with EJS templates check their website https://ejs.co/
