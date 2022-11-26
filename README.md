@@ -58,7 +58,7 @@ website/STATIC/favicon.ico => Website Favicon
 }
 ```
 
-## Pre-requisites before running prevjs
+## Install prev.js CLI command from NPM registry
 1. Download prev.js zip file from Github. and unzip prevjs.zip.
 2. cd prevjs && npm install
 3. Install nodejs and npm if not already installed before step 2.
