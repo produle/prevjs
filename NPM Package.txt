@@ -1,6 +1,0 @@
-npm adduser produle - one time
-npm login
-npm init --scope=@produle
-npm publish --access public
-
-change version before publish
