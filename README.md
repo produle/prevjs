@@ -40,8 +40,9 @@ website/STATIC/favicon.ico => Website Favicon
 {
   "recipe_ver": "0.0.1",
   "name": "business-website",
-  "description": "Business title - Here is my awesome product",
-  "author": "Vendor name",
+  "description": "Business - Product site",
+  "author": "Business Inc",
+  "production_url": "https://business.com",
   
    "optimize": {
     "webp": "true",
@@ -52,25 +53,25 @@ website/STATIC/favicon.ico => Website Favicon
   "deploy": {
     "domain": "https://business.com",
     "type": "aws",
-    "aws_id": "",
-    "aws_secret": ""
+    "aws_bucket": "",
+    "aws_cfdistributions": ""
   }
 }
+
 ```
 
-## Install prev.js CLI command from NPM registry
-1. Download prev.js zip file from Github. and unzip prevjs.zip.
-2. cd prevjs && npm install
-3. Install nodejs and npm if not already installed before step 2.
+## Install prevjs CLI command from NPM registry
+```npm install @produle/prevjs -g```
 
-## To preview your website in localhost
-```node prev.js /path-to-my-website-folder/recipe.json```
+## To preview your website in local machine
+```prevjs --run /path-to-my-website-folder/recipe.json```
 
 ## To optimize and export your website for production
-```node prev.js /path-to-my-website-folder/recipe.json export```
+```prevjs --export /path-to-my-website-folder/recipe.json```
 
-## To deploy your exported website in production (Requires aws command)
-```node prev.js /path-to-my-website-folder/recipe.json deploy```
+## To deploy your exported website in production AWS cloudfront
+```prevjs --deploy /path-to-my-website-folder/recipe.json```
+(Requires aws command setup)
 
 ## About EJS
 To know more about EJS and how to create websites with EJS templates check their website https://ejs.co/
