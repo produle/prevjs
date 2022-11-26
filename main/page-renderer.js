@@ -1,5 +1,6 @@
 
-
+const express = require('express');
+const path = require('path');
 var minify = require('html-minifier').minify;
 var minifyHTML = require('express-minify-html');
 var UglifyJS = require('uglify-js');
@@ -76,6 +77,7 @@ class pageRenderer
 
     previewPage (req,res)
     {
+	
 
 		if(req.originalUrl.includes(".ico"))
 		return;

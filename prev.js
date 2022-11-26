@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+const { program } = require('commander');
 const express = require('express');
 const path = require('path');
 const { exec } = require("child_process");
@@ -68,6 +70,8 @@ global.app.use(express.urlencoded({
     extended: true
 }))
 
+var argPresent = false;
+
 
 function processRecipe(recipe)
 {
@@ -115,10 +119,11 @@ function processRecipe(recipe)
 	
 }
 
-if(process.argv.length == 3 && process.argv[2].includes("recipe.json"))
+
+if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv[3].includes("recipe.json"))
 {
-	
-	processRecipe(process.argv[2]);
+	argPresent = true;
+	processRecipe(process.argv[3]);
 	
 	
 	global.app.listen(global.pconfig.port, () => {
@@ -131,10 +136,12 @@ if(process.argv.length == 3 && process.argv[2].includes("recipe.json"))
 	
 }	
 
-if(process.argv.length == 4 && process.argv[2].includes("recipe.json") && process.argv[3].includes("export"))
+
+if(process.argv.length == 4 && process.argv[2].trim() == "--export" && process.argv[3].includes("recipe.json"))
 {
+	argPresent = true;
 	console.log("Exporting site");
-	processRecipe(process.argv[2]);
+	processRecipe(process.argv[3]);
 	
 	exportSiteObj.export();
 
@@ -142,11 +149,12 @@ if(process.argv.length == 4 && process.argv[2].includes("recipe.json") && proces
 	
 }	
 
-if(process.argv.length == 4 && process.argv[2].includes("recipe.json") && process.argv[3].includes("deploy"))
+if(process.argv.length == 4 && process.argv[2].trim() == "--deploy" && process.argv[3].includes("recipe.json"))
 {
+	argPresent = true;
 	console.log("Deploying site");
 	
-	processRecipe(process.argv[2]);
+	processRecipe(process.argv[3]);
 	
 	if(global.pconfig.deploy && global.pconfig.deploy.type == "aws")
 	{
@@ -165,8 +173,6 @@ if(process.argv.length == 4 && process.argv[2].includes("recipe.json") && proces
        
 	}
 	
-
-	
 	
 }	
 
@@ -184,7 +190,6 @@ global.app.get('/*', (req, res) => {
 
 
 
-
 //Error handling to prevent app from crashing
 process.on('uncaughtException', (error, origin) => {
   console.log('----- Uncaught exception -----')
@@ -199,3 +204,31 @@ process.on('unhandledRejection', (reason, promise) => {
   console.log('----- Reason -----')
   console.log(reason)
 });
+
+
+program
+  .name('prevjs')
+  .description('Static website builder')
+  .version('0.0.1')
+  .option('--run <path-to-recipe.json>','To preview webite in local server')
+  .option('--export <path-to-recipe.json>','To export website')
+  .option('--deploy <path-to-recipe.json>','To deploy exported website');
+
+program.parse();
+
+const options = program.opts();
+
+if (process.argv.length < 4) 
+{
+  program.help();
+}
+else
+{
+	if(!argPresent)
+	{
+		 program.help();
+	}
+}
+
+
+
