@@ -1,14 +1,14 @@
 {
-  "name": "prevjs",
-  "version": "0.0.3",
-  "description": "prevjs",
-  "main": "server.js",
+  "name": "@produle/prevjs",
+  "version": "0.0.4",
+  "description": "Static website builder",
+  "main": "prev.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "prev.js --run recipe.json"
   },
   "author": "Produle",
   "bin": {
-    "prevjs": "cli.js"
+    "prevjs": "prev.js"
   },
   "license": "MIT",
   "dependencies": {
