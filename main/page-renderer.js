@@ -78,7 +78,6 @@ class pageRenderer
     previewPage (req,res)
     {
 	
-		console.log(req.originalUrl);
 
 		if(req.originalUrl.includes(".ico"))
 		return;

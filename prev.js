@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+const { program } = require('commander');
 const express = require('express');
 const path = require('path');
 const { exec } = require("child_process");
@@ -68,87 +70,123 @@ global.app.use(express.urlencoded({
     extended: true
 }))
 
+var argPresent = false;
 
 
-class prevjs
+function processRecipe(recipe)
 {
- 	processRecipe(recipe)
-	{
-		try {
-			
-		recipe = recipe.trim();
-		let configdata = fs.readFileSync(recipe);
+	try {
 		
-			if(configdata)
-			{
-				global.pconfig = JSON.parse(configdata);
-				
-				if(!global.pconfig.port)
-				global.pconfig.port = 3000;
-				
-				global.pconfig.localpath = recipe.replace("recipe.json","");
-				
-				if(!global.pconfig.production_url)
-				global.pconfig.production_url = "http://localhost:"+global.pconfig.port;
-				
-				if(!global.pconfig.exportdir)
-				global.pconfig.exportdir = global.pconfig.localpath+"out/";
-				
-				global.app.use(express.static(global.pconfig.localpath+'STATIC'));
-						
-				//Set the view folder
-				global.app.set('views', global.pconfig.localpath);
-			}
-			else
-			{
-				console.log("Error");
-			}
-		}
-		catch(e)
+	recipe = recipe.trim();
+	let configdata = fs.readFileSync(recipe);
+	
+		if(configdata)
 		{
-			if(global.DEBUG)
-			console.log(e)
+			global.pconfig = JSON.parse(configdata);
 			
-			console.log("Check path of recipe.json file. Example /Users/myname/website/recipe.json");
-			process.exit();
-	       
+			if(!global.pconfig.port)
+			global.pconfig.port = 3000;
+			
+			global.pconfig.localpath = recipe.replace("recipe.json","");
+			
+			if(!global.pconfig.production_url)
+			global.pconfig.production_url = "http://localhost:"+global.pconfig.port;
+			
+			if(!global.pconfig.exportdir)
+			global.pconfig.exportdir = global.pconfig.localpath+"out/";
+			
+			global.app.use(express.static(global.pconfig.localpath+'STATIC'));
+						
+			//Set the view folder
+			global.app.set('views', global.pconfig.localpath);
+			
+
 		}
+		else
+		{
+			console.log("Error");
+		}
+	}
+	catch(e)
+	{
+		if(global.DEBUG)
+		console.log(e)
 		
+		console.log("Check path of recipe.json file. Example /Users/myname/website/recipe.json");
+		process.exit();
+       
+	}
+	
+}
+
+
+if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv[3].includes("recipe.json"))
+{
+	argPresent = true;
+	processRecipe(process.argv[3]);
+	
+	
+	global.app.listen(global.pconfig.port, () => {
+					
+	    global.LOCAL_PREVIEW = true;
+		global.pconfig.local_url = "http://localhost:"+global.pconfig.port;
+		console.log("Local preview server running on URL: "+global.pconfig.local_url);
+
+	});
+	
+}	
+
+
+if(process.argv.length == 4 && process.argv[2].trim() == "--export" && process.argv[3].includes("recipe.json"))
+{
+	argPresent = true;
+	console.log("Exporting site");
+	processRecipe(process.argv[3]);
+	
+	exportSiteObj.export();
+
+	
+	
+}	
+
+if(process.argv.length == 4 && process.argv[2].trim() == "--deploy" && process.argv[3].includes("recipe.json"))
+{
+	argPresent = true;
+	console.log("Deploying site");
+	
+	processRecipe(process.argv[3]);
+	
+	if(global.pconfig.deploy && global.pconfig.deploy.type == "aws")
+	{
+		if (!fs.existsSync(global.pconfig.exportdir)) 
+		{
+			console.log("Output folder does not exist at " + global.pconfig.exportdir +" .Export site first before deploying.");
+			process.exit();
+    	}
+
+		awsManagerObj.deploy();
+	}
+	else
+	{
+		console.log("Deploy properties not found in recipe.json. Refer documentation.");
+		process.exit();
+       
 	}
 	
 	
-	viewSite(recipePath)
-	{
-		
-		this.processRecipe(recipePath);
-		
-		
-		global.app.listen(global.pconfig.port, () => {
-						
-		    global.LOCAL_PREVIEW = true;
-			global.pconfig.local_url = "http://localhost:"+global.pconfig.port;
-			console.log("Local preview server running on URL: "+global.pconfig.local_url);
-	
-		});
-		
-	}	
- 
+}	
 
-}
 
-module.exports = prevjs;
 
 //Declare routes
 
 //Preview
 global.app.get('/*', (req, res) => {
 
-	
 	 if(global.LOCAL_PREVIEW)
 	 pageRendererObj.previewPage(req,res);
 
 });
-
 
 
 
@@ -166,3 +204,31 @@ process.on('unhandledRejection', (reason, promise) => {
   console.log('----- Reason -----')
   console.log(reason)
 });
+
+
+program
+  .name('prevjs')
+  .description('Static website builder')
+  .version('0.0.1')
+  .option('--run <path-to-recipe.json>','To preview webite in local server')
+  .option('--export <path-to-recipe.json>','To export website')
+  .option('--deploy <path-to-recipe.json>','To deploy exported website');
+
+program.parse();
+
+const options = program.opts();
+
+if (process.argv.length < 4) 
+{
+  program.help();
+}
+else
+{
+	if(!argPresent)
+	{
+		 program.help();
+	}
+}
+
+
+
