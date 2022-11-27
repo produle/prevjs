@@ -160,7 +160,7 @@ class exportSite
 
 
                 //filter out DEFAULT directories
-                if(!global.DEFAULT_DIRS[hpathArr[0]])
+                if(!global.DEFAULT_DIRS[hpathArr[0]] && hpath != global.pconfig.exportdir)
                 {
 
                   console.log("Compiling: " + hpath);
@@ -187,7 +187,7 @@ class exportSite
 
               Promise.all(prms).then(function(){
 
-                  console.log("Exported");
+                  console.log("Exported to " + global.pconfig.exportdir);
                 process.exit();
 
                }).catch(function(err){
