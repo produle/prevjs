@@ -1,5 +1,20 @@
 body
 {
-	font-size: 16px;	
+	font-size: 16px;
+	font-family: 'arial','sans';	
 }
 
+.logo-part
+{
+	width: 100%;
+	height: 50px;
+	text-align: center;
+	padding: 10px;
+}
+
+footer
+{
+	padding: 20px;
+	text-align: center;
+	margin-top: 50px;
+}
