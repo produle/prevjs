@@ -1,6 +1,6 @@
 # prevjs
 
-> :warning: **This is an experimental project**: Things move fast and can break!
+> :warning: **Project is still under Beta stage**: Things move fast and can break!
 
 
 ## About prevjs
@@ -9,7 +9,7 @@ PrevJS is a static website builder built on top of EJS templates. Its main goal 
 ## Features
 * Create - Created for front-end people who want to code in plain html, js and css
 * Build - Export optimized for SEO with sitemap generation, webp conversion and minification
-* Deploy - Host to your CDN in a click. Supports AWS CloudFront for now  (Coming soon)
+* Deploy - Host to your CDN in a click. Supports AWS CloudFront for now
 
 ## How to use
 Before using prevjs it requires a website folder in your local system created with EJS pages and a recipe.json at its root. The website structure is bit different from conventional organization that is usually used in a regular EJS website. For more details on structure see below
@@ -60,16 +60,19 @@ website/STATIC/favicon.ico => Website Favicon
 
 ```
 
-## Install prevjs CLI command from NPM registry
+## Step 1: Install prevjs CLI command from NPM registry
 ```npm install @produle/prevjs -g```
 
-## To preview your website in local machine
+## Step 2: To create a very basic prevjs site (Optional)
+```prevjs --create /path-to-where-my-website-folder-should-be/```
+
+## Step 3: To preview your website in local machine
 ```prevjs --run /path-to-my-website-folder/recipe.json```
 
-## To optimize and export your website for production
+## Step 4: To optimize and export your website for production
 ```prevjs --export /path-to-my-website-folder/recipe.json```
 
-## To deploy your exported website in production AWS cloudfront
+## Step 5: To deploy your exported website in production AWS cloudfront
 ```prevjs --deploy /path-to-my-website-folder/recipe.json```
 (Requires aws command setup)
 
