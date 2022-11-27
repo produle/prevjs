@@ -24,6 +24,9 @@ const pageRendererObj = new pageRenderer();
 const exportSite = require('./main/export.js')
 const exportSiteObj = new exportSite();
 
+const createSite = require('./main/create.js')
+const createSiteObj = new createSite();
+
 const awsManager = require('./deploy/awsManager.js')
 const awsManagerObj = new awsManager();
 
@@ -95,6 +98,9 @@ function processRecipe(recipe)
 			if(!global.pconfig.exportdir)
 			global.pconfig.exportdir = global.pconfig.localpath+"out/";
 			
+			if(!global.pconfig.createdir)
+			global.pconfig.createdir = recipe;			
+			
 			global.app.use(express.static(global.pconfig.localpath+'STATIC'));
 						
 			//Set the view folder
@@ -144,6 +150,20 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--export" && process.a
 	processRecipe(process.argv[3]);
 	
 	exportSiteObj.export();
+
+	
+	
+}	
+
+
+if(process.argv.length == 4 && process.argv[2].trim() == "--create")
+{
+	argPresent = true;
+	console.log("Creating site");
+	global.pconfig = new Object();
+	global.pconfig.createdir = process.argv[3];
+	
+	createSiteObj.createBasic();
 
 	
 	
@@ -209,7 +229,8 @@ process.on('unhandledRejection', (reason, promise) => {
 program
   .name('prevjs')
   .description('Static website builder')
-  .version('0.0.5')
+  .version('0.0.7')
+  .option('--create <path-to-create-new-site>','Enter local path for creating a new prevjs site')
   .option('--run <path-to-recipe.json>','To preview webite in local server')
   .option('--export <path-to-recipe.json>','To export website')
   .option('--deploy <path-to-recipe.json>','To deploy exported website');

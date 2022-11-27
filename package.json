@@ -1,6 +1,6 @@
 {
   "name": "@produle/prevjs",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Static website builder",
   "main": "prev.js",
   "scripts": {
@@ -29,7 +29,8 @@
     "imagemin": "~7.0.1",
     "imagemin-webp": "~6.0.0",
     "command-exists": "~1.2.9",
-    "commander": "~9.4.1"
+    "commander": "~9.4.1",
+    "fs-extra": "~10.1.0"
   },
   "devDependencies": {},
   "repository": {

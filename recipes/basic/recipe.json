@@ -1,0 +1,20 @@
+{
+  "recipe_ver": "0.0.1",
+  "name": "basic-website",
+  "description": "Basic Website made with PrevJS",
+  "author": "prevjs.com",
+  "production_url": "https://website.com",
+  
+   "optimize": {
+    "webp": "true",
+    "minify_js": "true",
+    "minify_css": "true",
+    "minify_html": "true"
+  },
+  "deploy": {
+    "domain": "https://prevjs.com",
+    "type": "aws",
+    "aws_bucket": "",
+    "aws_cfdistributions": ""
+  }
+}
