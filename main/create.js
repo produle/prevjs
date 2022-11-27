@@ -10,16 +10,14 @@ class createSite
     {
 		var self = this;
 		
-       var prms = new Array();
-      //Refresh output directory before export
-		var dirarr = global.pconfig.createdir.split("/");
-		dirarr[0]
-
+		
         if (!fs.existsSync(global.pconfig.createdir)) {
          
 			fs.mkdirSync(global.pconfig.createdir);
 
         }
+
+		global.pconfig.createdir = global.pconfig.createdir.replace(/\/$/, '');
 
 		fs.mkdirSync(global.pconfig.createdir+"/prevjs-site");
 		
