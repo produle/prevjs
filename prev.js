@@ -229,7 +229,7 @@ process.on('unhandledRejection', (reason, promise) => {
 program
   .name('prevjs')
   .description('Static website builder')
-  .version('0.0.7')
+  .version('0.0.8')
   .option('--create <path-to-create-new-site>','Enter local path for creating a new prevjs site')
   .option('--run <path-to-recipe.json>','To preview webite in local server')
   .option('--export <path-to-recipe.json>','To export website')

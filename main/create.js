@@ -1,5 +1,5 @@
 
-
+const path = require('path');
 const fs = require('fs-extra');
 
 
@@ -30,7 +30,9 @@ class createSite
 
         }
 
-		fs.copySync("recipes/basic", fpath, { overwrite: true });
+		var srcDataDir = path.join(__dirname, "../recipes/basic");
+
+		fs.copySync(srcDataDir, fpath, { overwrite: true });
 		
  		console.log("Created at "+fpath);
 		console.log("To preview in browser type prevjs --run "+fpath+"/recipe.json");
