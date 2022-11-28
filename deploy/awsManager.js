@@ -1,5 +1,4 @@
 
-const AWS = require('aws-sdk');
 const path = require('path');
 const { exec } = require("child_process");
 const execFile = require('child_process').execFile;
