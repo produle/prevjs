@@ -1,0 +1,22 @@
+{
+  generate: true,
+  [
+    {
+      path: "blog/post1",
+      source: "inline",
+      data: {
+        title: "Post 1",
+        post: "This is an example article for post 1"
+      }
+    },
+    {
+      path: "blog/post2",
+      source: "inline",
+      data: {
+        title: "Post 2",
+        post: "This is an example article for post 2"
+      }
+    }
+  ]
+
+}

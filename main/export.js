@@ -19,6 +19,28 @@ const pageRendererObj = new pageRenderer();
 class exportSite
 {
 
+	exportTemplate(templateid)
+    {
+		return new Promise((resolve, reject) => {
+			
+			resolve(true);
+		
+		});	
+	};
+	
+	getDirectories = (source, callback) =>
+	  readdir(source, { withFileTypes: true }, (err, files) => {
+	    if (err) {
+	      callback(err)
+	    } else {
+	      callback(
+	        files
+	          .filter(dirent => dirent.isDirectory())
+	          .map(dirent => dirent.name)
+	      )
+	    }
+  	});
+	
     export()
     {
 		var self = this;
@@ -76,6 +98,29 @@ class exportSite
               }
 
             }
+
+
+			 const temptree = dirTree(global.pconfig.localpath+"TEMPLATES", { depth: 1 });
+		
+			
+			for(var j=0;j<temptree.children.length;j++)
+	       {
+		
+				if(fs.lstatSync(temptree.children[j].path).isDirectory())
+				{
+        			var obj = new Object();
+        			obj.path = temptree.children[j].path;
+        			obj.name = temptree.children[j].name;
+
+					prms2.push(self.exportTemplate(obj.path));
+
+				}
+
+
+			}
+		
+
+			
 
             Promise.all(prms2).then(function(){
 
