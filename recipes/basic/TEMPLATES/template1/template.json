@@ -1,22 +1,21 @@
 {
-  generate: true,
-  [
+  "generate": true,
+  "pages": [
     {
-      path: "blog/post1",
-      source: "inline",
-      data: {
-        title: "Post 1",
-        post: "This is an example article for post 1"
+      "path": "doc/article1",
+      "source": "inline",
+      "data": {
+        "title": "Doc Title 1",
+        "post": "Post article"
       }
     },
     {
-      path: "blog/post2",
-      source: "inline",
-      data: {
-        title: "Post 2",
-        post: "This is an example article for post 2"
+      "path": "doc/article2",
+      "source": "inline",
+      "data": {
+        "title": "Doc Title 2",
+        "post": "Post article 2"
       }
     }
   ]
-
 }

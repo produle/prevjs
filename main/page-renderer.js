@@ -10,17 +10,17 @@ const fs = require('fs');
 class pageRenderer
 {
 
-   renderPage(hpath,obj,htmlfile,webparr)
+   renderPage(ejspath,outpath,obj,htmlfile,webparr)
   {
 	
       return new Promise((resolve, reject) => {
           //compile ejs file and save to out folder
 		try
 		{
-          global.app.render(hpath, {siteobj: obj}, function (err, html) {
+          global.app.render(ejspath, {siteobj: obj}, function (err, html) {
 
               if (err) {
-              //console.log(hpath + "  " +err);
+              console.log(outpath + "  " +err);
               resolve(true);
               }
               else {
@@ -48,7 +48,7 @@ class pageRenderer
                 });
 
 
-              var opath = global.pconfig.exportdir+hpath;
+              var opath = global.pconfig.exportdir+outpath;
 
               fs.mkdirSync(opath, { recursive: true });
 

@@ -1,10 +1,7 @@
-<%- include ('../PARTIALS/header', {title: "<%= prevjs.title %>",path: "../" }); %>
+<%- include ('../../PARTIALS/header', {title: siteobj.data.title,path: "../../" }); %>
 
 
-
-<%= prevjs.post %>
-
+<%= siteobj.data.post %>
 
 
-
- <%- include ('../PARTIALS/footer'); %>
+ <%- include ('../../PARTIALS/footer'); %>

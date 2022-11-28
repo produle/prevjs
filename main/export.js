@@ -19,11 +19,67 @@ const pageRendererObj = new pageRenderer();
 class exportSite
 {
 
-	exportTemplate(templateid)
+	exportTemplate(templatepath,webparr)
     {
 		return new Promise((resolve, reject) => {
 			
-			resolve(true);
+			 if (fs.existsSync(templatepath+"/template.json")) {
+			    	fs.readFile(templatepath+"/template.json", "utf8", (err, jsonString) => {
+					  if (err) {
+					    console.log("File read failed: " + templatepath+"/template.json", err);
+						resolve(false);
+					    return;
+					  }
+			
+					  var tempObj = JSON.parse(jsonString);
+						
+					  if(tempObj.generate == true || tempObj.generate == "true")
+			  		  {
+							 var prms = new Array();
+						
+							var temparr = templatepath.split("/");
+							var tempname = temparr[temparr.length-1];
+						
+							for(var p=0;p<tempObj.pages.length;p++)
+							{
+								var page = tempObj.pages[p];
+								
+								 var obj = new Object();
+                  				 obj.urlpath = global.pconfig.production_url+"/";
+								 obj.data = page.data;
+							
+							
+								 var htmlfile = "index.html";
+							
+								 var ejspath = "templates/"+tempname+"/template.ejs";
+							
+							
+								 console.log("Compiling template for: "+page.path );
+								 
+                 				 prms.push(pageRendererObj.renderPage(ejspath,page.path,obj,htmlfile,webparr));
+								
+								
+								
+							}
+							
+							 Promise.all(prms).then(function(){
+								
+								resolve(true);
+							
+							});
+					  }
+					  else
+						resolve(false);
+			
+			
+					});
+			  }
+			  else
+			  {
+				console.log("template.json file does not exist for " + templatepath);	
+				resolve(false);
+			 }
+			
 		
 		});	
 	};
@@ -100,31 +156,14 @@ class exportSite
             }
 
 
-			 const temptree = dirTree(global.pconfig.localpath+"TEMPLATES", { depth: 1 });
-		
 			
-			for(var j=0;j<temptree.children.length;j++)
-	       {
-		
-				if(fs.lstatSync(temptree.children[j].path).isDirectory())
-				{
-        			var obj = new Object();
-        			obj.path = temptree.children[j].path;
-        			obj.name = temptree.children[j].name;
-
-					prms2.push(self.exportTemplate(obj.path));
-
-				}
-
-
-			}
 		
 
 			
 
             Promise.all(prms2).then(function(){
 
-               const jstree = dirTree(global.pconfig.exportdir+"js/internal", { extensions: /\.css/ });
+               const jstree = dirTree(global.pconfig.exportdir+"js/internal", { extensions: /\.js/ });
 
 
                 for(var h=0; h < jstree.children.length; h++)
@@ -203,9 +242,12 @@ class exportSite
                   ejsfile = "index.ejs";
                 }
 
+				var exportpatharr = global.pconfig.exportdir.split("/");
+				var exportfolder = exportpatharr[exportpatharr.length-2];
+				
 
                 //filter out DEFAULT directories
-                if(!global.DEFAULT_DIRS[hpathArr[0]] && hpath != global.pconfig.exportdir)
+                if(!global.DEFAULT_DIRS[hpathArr[0]] && hpath != exportfolder)
                 {
 
                   console.log("Compiling: " + hpath);
@@ -222,10 +264,28 @@ class exportSite
 
                   sitemap = sitemap + sval;
 
-
-                  prms.push(pageRendererObj.renderPage(hpath,obj,htmlfile,webparr));
+                  prms.push(pageRendererObj.renderPage(hpath,hpath,obj,htmlfile,webparr));
                 }
               }
+
+			 const temptree = dirTree(global.pconfig.localpath+"TEMPLATES", { depth: 1 });
+		
+			
+			   for(var j=0;j<temptree.children.length;j++)
+		       {
+					
+					if(fs.lstatSync(temptree.children[j].path).isDirectory())
+					{
+	        			var obj = new Object();
+	        			obj.path = temptree.children[j].path;
+	        			obj.name = temptree.children[j].name;
+	
+						prms.push(self.exportTemplate(obj.path,webparr));
+	
+					}
+	
+	
+				}
 
               sitemap = sitemap + '</urlset>';
               fs.writeFileSync(global.pconfig.exportdir+"sitemap.xml", sitemap);
