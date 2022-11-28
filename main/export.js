@@ -7,7 +7,9 @@ var minify = require('html-minifier').minify;
 var minifyHTML = require('express-minify-html');
 var UglifyJS = require('uglify-js');
 var cleanCSS = require('clean-css');
+
 const fs = require('fs');
+const fetch = require('node-fetch');
 
 const imageOptimizer = require('../main/image-optimize.js')
 const imageOptimizerObj = new imageOptimizer();
@@ -19,8 +21,10 @@ const pageRendererObj = new pageRenderer();
 class exportSite
 {
 
-	exportTemplate(templatepath,webparr)
+    exportTemplate = async function(templatepath,webparr)	
     {
+    	var self = this;
+    	
 		return new Promise((resolve, reject) => {
 			
 			 if (fs.existsSync(templatepath+"/template.json")) {
@@ -46,18 +50,35 @@ class exportSite
 								
 								 var obj = new Object();
                   				 obj.urlpath = global.pconfig.production_url+"/";
-								 obj.data = page.data;
-							
-							
+                  				 
+                  				 
 								 var htmlfile = "index.html";
 							
 								 var ejspath = "templates/"+tempname+"/template.ejs";
-							
-							
+															
 								 console.log("Compiling template for: "+page.path );
-								 
-                 				 prms.push(pageRendererObj.renderPage(ejspath,page.path,obj,htmlfile,webparr));
+                  				 
+                  				 if(page.source == "inline")
+                  				 {
+									 obj.data = page.data;								
+									 
+	                 				 prms.push(pageRendererObj.renderPage(ejspath,page.path,obj,htmlfile,webparr));
+								}
 								
+								if(page.source == "jsonurl")
+                  				 {
+
+									prms.push(self.fetchPageData(page.dataurl).then((pdata) => {
+									    
+									     obj.data = pdata;
+																		
+		                 				 prms.push(pageRendererObj.renderPage(ejspath,page.path,obj,htmlfile,webparr));
+								
+									}));
+									
+									 
+    
+								}
 								
 								
 							}
@@ -83,6 +104,29 @@ class exportSite
 		
 		});	
 	};
+	
+	fetchPageData(dataurl)
+    {
+	
+      return new Promise((resolve, reject) => {
+      
+      		fetch(dataurl, { method: "Get" })
+		    .then(res => res.json())
+		    .then((json) => {
+		       	
+	
+		 			
+		 			resolve(json);
+		 
+	
+		    }).
+			  catch(error => {
+			      reject(false);
+			}); 
+      
+      });
+      
+     }
 	
 	getDirectories = (source, callback) =>
 	  readdir(source, { withFileTypes: true }, (err, files) => {
