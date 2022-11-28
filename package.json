@@ -10,6 +10,14 @@
   "bin": {
     "prevjs": "prev.js"
   },
+  "keywords": [
+    "website",
+    "static",
+    "builder",
+    "generator",
+    "deploy",
+    "aws"
+  ],
   "license": "MIT",
   "dependencies": {
     "ejs": "^3.1.8",
