@@ -26,6 +26,10 @@ website/DRAFTS/working.ejs => Example drafts page
 website/PARTIALS => All re-used components and sections of website used in multiple pages
 website/PARTIALS/header.ejs => Example partial for header in all pages
 
+website/TEMPLATES => Contains templates for dynamically generating pages from json data
+website/TEMPLATES/example-template/template.ejs => HTML page with data variables of an example template
+website/TEMPLATES/example-template/template.json => Contains array of page data each with unique dynamic route
+
 website/STATIC => All static files like images,js and css are stored here
 website/STATIC/css/external => All third party css files
 website/STATIC/css/internal => All internal styles written for this site
@@ -75,6 +79,41 @@ website/STATIC/favicon.ico => Website Favicon
 ## Step 5: To deploy your exported website in production AWS cloudfront
 ```prevjs --deploy /path-to-my-website-folder/recipe.json```
 (Requires aws command setup)
+
+
+## Dynamic page generation using TEMPLATES
+This TEMPLATES folder is used for dynamically generating pages with data. Data can be either inline inside the template.json or from a remote JSON url.
+
+Each template folder inside TEMPLATES should contain the following files with these specific names:
+> template.ejs = Contains the template html structure filled with data variables
+
+> template.json = Contains array of page data which is used for generating pages using template.ejs
+
+### Sample template.json
+```
+{
+  "generate": true,
+  "pages": [
+    {
+      "path": "doc/article1",
+      "source": "inline",
+      "data": {
+        "title": "Doc Title 1",
+        "post": "Post article 1"
+      }
+    },
+    {
+      "path": "doc/article2",
+      "source": "jsonurl",
+      "dataurl": "https://recipes.prevjs.com/examples/basic/article2.json"
+    
+    }
+  ]
+}
+
+
+```
+
 
 ## About EJS
 To know more about EJS and how to create websites with EJS templates check their website https://ejs.co/
