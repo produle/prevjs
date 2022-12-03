@@ -9,7 +9,8 @@ const process = require('process');
 const {resolve} = require('path');
 const resolvepath = require('path').resolve;
 const fs = require('fs');
-
+const WebSocket = require('ws');
+const chokidar = require('chokidar');
 
 var minify = require('html-minifier').minify;
 var minifyHTML = require('express-minify-html');
@@ -136,8 +137,32 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv
 	processRecipe(process.argv[3]);
 	
 	
+	var wssadded = false;
+	
 	global.app.listen(global.pconfig.port, () => {
-					
+		
+		chokidar.watch(global.pconfig.localpath, {ignoreInitial: true}).on('all', (event, path) => {
+			
+			if(wss)
+			{
+				wss.clients.forEach((client) => {
+	    			client.send(path);
+	  			});
+			}
+		 });
+				
+		
+		wssadded = true;
+		
+		const wss = new WebSocket.Server({ port: 7071 });
+
+		 wss.on('message', (messageAsString) => {
+			
+			alert(messageAsString);
+			
+		 });	
+	
+			
 	    global.LOCAL_PREVIEW = true;
 		global.pconfig.local_url = "http://localhost:"+global.pconfig.port;
 		console.log("Local preview server running on URL: "+global.pconfig.local_url);
