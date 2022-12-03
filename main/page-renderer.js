@@ -1,4 +1,6 @@
 
+const dirTree = require("directory-tree");
+
 const express = require('express');
 const path = require('path');
 var minify = require('html-minifier').minify;
@@ -7,8 +9,34 @@ var UglifyJS = require('uglify-js');
 var cleanCSS = require('clean-css');
 const fs = require('fs');
 
+const fetch = require('node-fetch');
+
 class pageRenderer
 {
+	
+	fetchPageData(dataurl)
+    {
+	
+      return new Promise((resolve, reject) => {
+      
+      		fetch(dataurl, { method: "Get" })
+		    .then(res => res.json())
+		    .then((json) => {
+		       	
+	
+		 			
+		 			resolve(json);
+		 
+	
+		    }).
+			  catch(error => {
+			      reject(false);
+			}); 
+      
+      });
+      
+     }
+	
 
    renderPage(ejspath,outpath,obj,htmlfile,webparr)
   {
@@ -78,7 +106,7 @@ class pageRenderer
 
     previewPage (req,res)
     {
-	
+		var self = this;
 
 		if(req.originalUrl.includes(".ico"))
 		return;
@@ -96,13 +124,129 @@ class pageRenderer
 
       				  if (err) {
 						//console.log(err);
-      					console.log("Error displaying " + obj.urlpath+""+surl);
-      				    res.status(500).send("Server error! Try again.");
+						//check if it is a template path
+						console.log("Checking if it is a template path...");
+						
+					 	const temptree = dirTree(global.pconfig.localpath+"TEMPLATES", { depth: 1 });
+				
+					  var pageobj = null;
+						
+					   for(var j=0;j<temptree.children.length;j++)
+				       {
+							
+							if(fs.lstatSync(temptree.children[j].path).isDirectory())
+							{
+			        			var obj = new Object();
+			        			obj.path = temptree.children[j].path;
+			        			obj.name = temptree.children[j].name;
+
+								var templatepath = obj.path;
+								
+								if (fs.existsSync(templatepath+"/template.json")) {
+						    	
+									var jsonString = fs.readFileSync(templatepath+"/template.json", "utf8");
+								  
+						
+								  var tempObj = JSON.parse(jsonString);
+						
+									
+								  if(tempObj.generate == true || tempObj.generate == "true")
+						  		  {
+									
+										var temparr = templatepath.split("/");
+										var tempname = temparr[temparr.length-1];
+									
+										for(var p=0;p<tempObj.pages.length;p++)
+										{
+											var page = tempObj.pages[p];
+											
+											
+											if(page.path == surl)
+											{
+												
+			                  				 	pageobj = new Object();
+												pageobj.temparr = temparr;
+												pageobj.tempname = tempname;
+												pageobj.page = page;
+
+											    break;
+											
+											}
+											
+											
+										}
+										
+										
+								  }
+						
+									
+								
+								
+			  					
+						
+								}
+			
+			
+							}
+
+						}
+						
+						if(pageobj)
+						{
+							
+				 				var ejspath = "templates/"+pageobj.tempname+"/template.ejs";
+              				 
+              				 if(pageobj.page.source == "inline")
+              				 {
+								 obj.data = pageobj.page.data;	
+							
+								res.render(ejspath, {siteobj: obj}, function (err, html) {	
+									if(err)
+									{
+										console.log("Error displaying " + obj.urlpath+""+surl);
+      				    				res.status(500).send("Server error! Try again.");
+									}	
+									else
+									res.send(html);						
+								 
+								});
+							}
+							
+							if(pageobj.page.source == "jsonurl")
+              				 {
+
+								self.fetchPageData(pageobj.page.dataurl).then((pdata) => {
+								    
+								     obj.data = pdata;
+											
+									res.render(ejspath, {siteobj: obj}, function (err, html) {
+										if(err)
+										{
+											console.log("Error displaying " + obj.urlpath+""+surl);
+	      				    				res.status(500).send("Server error! Try again.");
+										}	
+										else
+										res.send(html);								
+								 
+									});						
+							
+								});
+								
+								 
+
+								}
+						}
+						else
+						{
+							
+      						console.log("Error displaying " + obj.urlpath+""+surl);
+      				    	res.status(500).send("Server error! Try again.");
+						}
       				  }
       				  else {
       				    res.send(html);
       				  }
-      				});
+      			});
 
       	}
       	catch(e)
