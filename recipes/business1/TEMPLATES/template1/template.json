@@ -1,0 +1,19 @@
+{
+  "generate": true,
+  "pages": [
+    {
+      "path": "doc/article1",
+      "source": "inline",
+      "data": {
+        "title": "Doc Title 1",
+        "post": "Post article 1"
+      }
+    },
+    {
+      "path": "doc/article2",
+      "source": "jsonurl",
+      "dataurl": "https://recipes.prevjs.com/examples/basic/article2.json"
+    
+    }
+  ]
+}

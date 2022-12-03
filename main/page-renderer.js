@@ -153,7 +153,7 @@ class pageRenderer
       			 res.render(surl, {siteobj: obj}, function (err, html) {
 
       				  if (err) {
-						//console.log(err);
+						console.log(err);
 						//check if it is a template path
 						console.log("Checking if it is a template path...");
 						

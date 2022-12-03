@@ -1,0 +1,53 @@
+.pdl_pricing_table{
+    border: 1px solid #eaeaea;
+    border-radius: 5px;
+}
+.pdl_pricing_table td,.pdl_pricing_table th{
+    padding: 10px 14px;
+}
+.pdl_pricing_table th{
+    font-size: 25px;
+    font-weight: 500;
+}
+.pdl_pricing_col_headerLabel{
+    font-size: 32px;
+    font-weight: 300;
+}
+.pdl_pricing_col_priceLabel{
+    font-size: 22px;
+    font-weight: 300;
+    margin-block-start: 10px;
+    margin-block-end: 10px;
+}
+.pdl_price_sublabel{
+    padding-left: 5px;
+    font-size: 14px;
+    font-weight: 400;
+}
+.pdl_pricing_col{
+    border: 1px solid #dee2e6;
+    padding: 12px 14px;
+    border-radius: 5px;
+}
+.pdl_pricing_list{
+    padding-inline-start: 20px;
+    margin-top: 2rem;
+}
+.pdl_pricing_grid{
+    display: grid;
+    grid-gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, 300px);
+    justify-content: center;
+}
+
+.pdl_pricing_list li{
+    padding: 7px 0;
+    font-weight: 300;
+}
+@media(min-width:992px){
+    .pdl_pricing_grid{
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        grid-template-columns: repeat(auto-fill, 350px);
+    }
+}

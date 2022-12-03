@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+				<title>Pricing</title>
+    			
+    			<meta name="description" content="" /> 
+				<meta name="keywords" content="" />
+    	
+    	
+    			<%- include ('../PARTIALS/header', {path: "../" }); %>
+
+				<link rel="stylesheet" type='text/css' href="<%= siteobj.urlpath %>css/internal/pricing.css" /> 
+
+    </head>
+    
+    <body>
+    
+    <%- include ('../PARTIALS/menu', {path: "../" }); %>
+      <!-- Page contents starts here -->
+
+    <section class="pdl_page_section pdl_py-3">
+        <div class="pdl_container container pdl_py-2">
+            <div class="text-center">
+                <div class="pdl_HeroStyle_home_hero_main_content pdl_HeroStyle_home_hero_main_contentWrapper d-flex flex-column justify-content-between w-lg-75 mx-auto">
+                    <div class="pdl_duo_leadspace_large__headline w-100 pdl_mb_2">
+                        <h1 class="pdl__section_heading_05 d-block pb-0 mt-5 h1 text-center">Pricing</h1>
+                    </div>
+                    <div class="pdl_duo_leadspace_large__subhead pt-3">
+                        <div class="w-100 pt-3 pt-lg-0">
+                            <p class="d-block mb-0 pdl_fw_300 pdl_fs_20"><span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus laborum quaerat distinctio! Doloremque consequuntur laudantium soluta alias eius maxime expedita </span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <section class="pdl_page_section pdl_py-3 pdl_py-lg-5 ">
+            <div class="pdl_container container pdl_py-2">
+                <div class="pdl_pricing_grid">
+
+                    <div class="pdl_pricing_col">
+                        <div class="pdl_pricing_col_header">
+                            <h3 class="pdl_pricing_col_headerLabel">Free</h3>
+                            <h5 class="pdl_pricing_col_priceLabel">$0<span class="pdl_price_sublabel">/mon</span></h5>
+                            <button class="pdl_btn pdl_btn-outline-primary w-100 mt-2">Get Started</button>
+                        </div>
+                        <div class="pdl_pricing_col_body">
+                            <ul class="pdl_pricing_list mt-3 mb-4">
+                                <li>10 users included</li>
+                                <li>2 GB of storage</li>
+                                <li>Email support</li>
+                                <li>Help center access</li>
+                              </ul>
+                        </div>
+                    </div>
+
+                    <div class="pdl_pricing_col">
+                        <div class="pdl_pricing_col_header">
+                            <h3 class="pdl_pricing_col_headerLabel">Pro</h3>
+                            <h5 class="pdl_pricing_col_priceLabel">$39.99<span class="pdl_price_sublabel">/mon</span></h5>
+                            <button class="pdl_btn pdl_btn-primary w-100 mt-2">Get Started</button>
+                        </div>
+                        <div class="pdl_pricing_col_body">
+                            <ul class="pdl_pricing_list mt-3 mb-4">
+                                <li>20 users included</li>
+                                <li>5 GB of storage</li>
+                                <li>Full Email support</li>
+                                <li>Help center access</li>
+                              </ul>
+                        </div>
+                    </div>
+
+                    <div class="pdl_pricing_col">
+                        <div class="pdl_pricing_col_header">
+                            <h3 class="pdl_pricing_col_headerLabel">Premium</h3>
+                            <h5 class="pdl_pricing_col_priceLabel">$69.99<span class="pdl_price_sublabel">/mon</span></h5>
+                            <button class="pdl_btn pdl_btn-primary w-100 mt-2">Get Started</button>
+                        </div>
+                        <div class="pdl_pricing_col_body">
+                            <ul class="pdl_pricing_list mt-3 mb-4">
+                                <li>30 users included</li>
+                                <li>10 GB of storage</li>
+                                <li>Unlimited Email support</li>
+                                <li>Help center access</li>
+                              </ul>
+                        </div>
+                    </div>
+
+                </div>
+                
+            </div>
+        
+        </section>
+
+
+    <!-- Page contents ends here -->
+
+ 	
+  
+ 	
+ <%- include ('../PARTIALS/footer', {siteobj: siteobj,path: "./" }); %>
+ 
