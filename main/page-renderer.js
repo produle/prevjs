@@ -103,6 +103,37 @@ class pageRenderer
       });
     }
 
+	modifyHTML(html,path)
+	{
+		var str = "<script> var prevjs_localpathvar='"+path+"'; ";
+		
+		
+		str = str +`
+		
+		 
+			    let webSocket = new WebSocket("ws://localhost:7071");
+			  
+			
+			    webSocket.onmessage = (event) => {
+			     
+					
+					if(prevjs_localpathvar == event.data)
+			     	location.reload();
+			     	
+			    };
+
+		   </script> 
+		
+		
+		`;
+		
+		
+		var modHtml = insertTag(str, html);
+		
+		return modHtml;
+		
+
+	}
 
     previewPage (req,res)
     {
@@ -112,7 +143,6 @@ class pageRenderer
 		return;
 		
         var surl = "" + req.originalUrl.slice(1);
-
 
       	try
       	{
@@ -207,7 +237,7 @@ class pageRenderer
       				    				res.status(500).send("Server error! Try again.");
 									}	
 									else
-									res.send(html);						
+									res.send(self.modifyHTML(html,surl));						
 								 
 								});
 							}
@@ -226,7 +256,7 @@ class pageRenderer
 	      				    				res.status(500).send("Server error! Try again.");
 										}	
 										else
-										res.send(html);								
+										res.send(self.modifyHTML(html,surl));								
 								 
 									});						
 							
@@ -244,7 +274,8 @@ class pageRenderer
 						}
       				  }
       				  else {
-      				    res.send(html);
+	
+      				    res.send(self.modifyHTML(html,surl));
       				  }
       			});
 
@@ -259,3 +290,12 @@ class pageRenderer
 };
 
 module.exports = pageRenderer
+
+String.prototype.htmlsplice = function( idx, rem, s ) {
+    return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
+};
+
+var insertTag = function(newTag, html) {
+  var end = html.indexOf('</head>');
+  return html.htmlsplice(end, 0, newTag);
+}

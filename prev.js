@@ -146,6 +146,11 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv
 			if(wss)
 			{
 				wss.clients.forEach((client) => {
+					
+					path = path.replace(global.pconfig.localpath,"");
+					path = path.replace("/index.ejs","");
+					path = path.replace("index.ejs","");
+					
 	    			client.send(path);
 	  			});
 			}
@@ -158,7 +163,7 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv
 
 		 wss.on('message', (messageAsString) => {
 			
-			alert(messageAsString);
+			//alert(messageAsString);
 			
 		 });	
 	
