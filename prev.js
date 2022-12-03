@@ -7,6 +7,7 @@ const execFile = require('child_process').execFile;
 const execSync = require('child_process').execSync;
 const process = require('process');
 const {resolve} = require('path');
+const resolvepath = require('path').resolve;
 const fs = require('fs');
 
 
@@ -86,12 +87,14 @@ function processRecipe(recipe)
 	
 		if(configdata)
 		{
+			recipe = resolvepath(recipe);
+			
 			global.pconfig = JSON.parse(configdata);
 			
 			if(!global.pconfig.port)
 			global.pconfig.port = 3000;
 			
-			global.pconfig.localpath = recipe.replace("recipe.json","");
+			global.pconfig.localpath = recipe.replace("recipe.json","");			
 			
 			if(!global.pconfig.production_url)
 			global.pconfig.production_url = "http://localhost:"+global.pconfig.port;

@@ -20,7 +20,8 @@ class pageRenderer
           global.app.render(ejspath, {siteobj: obj}, function (err, html) {
 
               if (err) {
-              console.log(outpath + "  " +err);
+              //console.log(outpath + "  " +err);
+			 console.log("Error rendering " + outpath);
               resolve(true);
               }
               else {
@@ -94,7 +95,8 @@ class pageRenderer
       			 res.render(surl, {siteobj: obj}, function (err, html) {
 
       				  if (err) {
-      					console.log(err)
+						//console.log(err);
+      					console.log("Error displaying " + obj.urlpath+""+surl);
       				    res.status(500).send("Server error! Try again.");
       				  }
       				  else {
