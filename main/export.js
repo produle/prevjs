@@ -18,6 +18,8 @@ const imageOptimizerObj = new imageOptimizer();
 const pageRenderer = require('../main/page-renderer.js')
 const pageRendererObj = new pageRenderer();
 
+var sitemap = "";
+
 class exportSite
 {
 
@@ -57,6 +59,16 @@ class exportSite
 								 var ejspath = "templates/"+tempname+"/template.ejs";
 															
 								 console.log("Compiling template for: "+page.path );
+							
+
+				                  var sval = "<url>\n";
+				                  sval = sval + "<loc>"+global.pconfig.production_url+"/"+page.path+"</loc>\n";
+				
+				                  var date = new Date().toISOString();
+				                  sval = sval + "<lastmod>"+date+"</lastmod>\n";
+				                  sval = sval + "</url>\n";
+
+								 sitemap = sitemap + sval;
                   				 
                   				 if(page.source == "inline")
                   				 {
@@ -256,7 +268,7 @@ class exportSite
 
 
 
-              var sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
+              sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
               sitemap = sitemap + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
 
@@ -331,10 +343,12 @@ class exportSite
 	
 				}
 
-              sitemap = sitemap + '</urlset>';
-              fs.writeFileSync(global.pconfig.exportdir+"sitemap.xml", sitemap);
 
               Promise.all(prms).then(function(){
+	
+				
+              		sitemap = sitemap + '</urlset>';
+              		fs.writeFileSync(global.pconfig.exportdir+"sitemap.xml", sitemap);
 
                   console.log("Exported to " + global.pconfig.exportdir);
                 process.exit();
