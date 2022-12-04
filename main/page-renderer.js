@@ -22,8 +22,13 @@ var minifyHTML = require('express-minify-html');
 var UglifyJS = require('uglify-js');
 var cleanCSS = require('clean-css');
 const fs = require('fs');
-var MarkdownIt = require('markdown-it');
-const md = new MarkdownIt();
+var md = require('markdown-it')({
+  html: true,
+  linkify: true,
+  typographer: true,
+  xhtmlOut: true,
+  breaks: true
+});
 
 
 //### end of required external libraries
