@@ -1,18 +1,43 @@
-# prevjs
+# PrevJS
 
-> :warning: **Project is still under Beta stage**: Things move fast and can break!
-
-
-## About prevjs
-PrevJS is a static website builder built on top of EJS templates. Its main goal is to build, optimize and deploy static websites with much less work.
+## About 
+PrevJS is a super-easy static website builder built on top of EJS templates. It's main goal is to build, optimize and deploy static websites with much less work.
 
 ## Features
-* Create - Created for front-end people who want to code in plain html, js and css
-* Build - Export optimized for SEO with sitemap generation, webp conversion and minification
-* Deploy - Host to your CDN in a click. Supports AWS CloudFront for now
+* Create - Created for front-end people who want to code in plain html, js and css. Which also means you can convert your existing static website into a prevjs site easily
+* Build - Export optimized for SEO with sitemap generation, page pre-fetching, webp conversion and minification. Scores 99 in Google pagespeed tool.
+* Deploy - Host to your CDN in a click. Out of box support for AWS CloudFront
+* Dynamic templates - Generate static webpages dynamically from JSON data with a single template. Useful for blog, doc
+* Dynamic template preview without export. Just enter the dynamic path in your browser and PrevJS will automatically load the page with related data
+* PrevJS sites can be part of your existing website. Since a prevjs site has almost no dependencies or node modules. It can be part of your existing website even if it is a JSP or PHP site.
+* Live preview of site - no reloading of webpages after editing
+* Future-proof, the code both in development and production is web native as it requires no special modifications or libraries (except ejs). Which means even in the un-likely event PrevJS is not maintained, your code will not go bust like other un-maintained site builders.
 
-## How to use
-Before using prevjs it requires a website folder in your local system created with EJS pages and a recipe.json at its root. The website structure is bit different from conventional organization that is usually used in a regular EJS website. For more details on structure see below
+
+# How to use
+
+## Step 1: Install prevjs CLI command from NPM registry
+```npm install @produle/prevjs -g```
+
+## Step 2: To create a very basic prevjs site (Optional)
+```prevjs --create /path-to-where-my-website-folder-should-be/```
+
+## Step 3: To preview your website in local machine
+```prevjs --run /path-to-my-website-folder/recipe.json```
+
+## Step 4: To optimize and export your website for production
+```prevjs --export /path-to-my-website-folder/recipe.json```
+
+## Step 5: To deploy your exported website in production AWS cloudfront
+```prevjs --deploy /path-to-my-website-folder/recipe.json```
+(Requires aws command setup)
+
+## To list locally available website recipes
+```prevjs --list-recipes local```
+
+## To install a particular recipe
+```prevjs --create business1 /path-to-my-site/recipe.json```
+
 
 ## Sample PrevJS Website Structure
 ```
@@ -64,25 +89,8 @@ website/STATIC/favicon.ico => Website Favicon
 
 ```
 
-## Step 1: Install prevjs CLI command from NPM registry
-```npm install @produle/prevjs -g```
-
-## Step 2: To create a very basic prevjs site (Optional)
-```prevjs --create /path-to-where-my-website-folder-should-be/```
-
-## Step 3: To preview your website in local machine
-```prevjs --run /path-to-my-website-folder/recipe.json```
-
-## Step 4: To optimize and export your website for production
-```prevjs --export /path-to-my-website-folder/recipe.json```
-
-## Step 5: To deploy your exported website in production AWS cloudfront
-```prevjs --deploy /path-to-my-website-folder/recipe.json```
-(Requires aws command setup)
-
-
 ## Dynamic page generation using TEMPLATES
-This TEMPLATES folder is used for dynamically generating pages with data. Data can be either inline inside the template.json or from a remote JSON url.
+This TEMPLATES folder is used for dynamically generating pages with data. Data can be either inline inside the template.json or from a remote JSON url. Useful when the webpage design does not change but only it's data is different for each page.
 
 Each template folder inside TEMPLATES should contain the following files with these specific names:
 > template.ejs = Contains the template html structure filled with data variables
