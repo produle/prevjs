@@ -5,6 +5,7 @@ PrevJS is a super-easy static website generator built on top of EJS templates. I
 
 ## Features
 * 🧑‍💻 Create - Created for front-end people who want to code in **plain html, js and css**. Which also means you can convert your existing static website into a prevjs site easily
+
 * ⏱ Build - Export **optimized for SEO** with sitemap generation, page pre-fetching, webp conversion and minification. Scores 99 in Google pagespeed tool.
 * 🎉 Deploy - Host to your CDN in a click. Out of box support for **AWS CloudFront**
 * 🎭 Dynamic templates - Generate **static webpages dynamically** from JSON data with a single template. Useful for blog, doc
