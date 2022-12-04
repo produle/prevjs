@@ -6,10 +6,10 @@
   "production_url": "https://website.com",
   
    "optimize": {
-    "webp": "false",
-    "minify_js": "false",
-    "minify_css": "false",
-    "minify_html": "false"
+    "webp": "true",
+    "minify_js": "true",
+    "minify_css": "true",
+    "minify_html": "true"
   },
   "deploy": {
     "domain": "https://prevjs.com",
