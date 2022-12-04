@@ -119,36 +119,61 @@ class pageRenderer
 		//This helps in auto-reloading page in browser whenever local changes happen
 		//It communicates with preview server via sockets
 		
-		var wsstr = "<script> var prevjs_localpathvar='"+path+"'; ";		
+		var wsstr = "";
 		
-		wsstr = wsstr +`
-		
-		 
-			    let webSocket = new WebSocket("ws://localhost:7071");
-			  
+		if(global.LOCAL_PREVIEW)
+		{
+		   wsstr = "<script> var prevjs_localpathvar='"+path+"'; ";		
 			
-			    webSocket.onmessage = (event) => {
-			     
-					//TODO need more precise rendering
-					//if(prevjs_localpathvar == event.data)
-			     	location.reload();
-			     	
-			    };
-
-		   </script> 
+			wsstr = wsstr +`
+			
+			 
+				    let webSocket = new WebSocket("ws://localhost:7071");
+				  
+				
+				    webSocket.onmessage = (event) => {
+				     
+						//TODO need more precise rendering
+						//if(prevjs_localpathvar == event.data)
+				     	location.reload();
+				     	
+				    };
+	
+			   </script> 
+			
+			
+			`;
+			
+			
+			
+		}
 		
-		
-		`;
-		
+		if(global.pconfig.optimize.prefetch_pages == "true")
+		{
+			wsstr = wsstr + '<script type="text/javascript" src="https://unpkg.com/quicklink@2.3.0/dist/quicklink.umd.js"></script>	';
+			
+			wsstr = wsstr + "<script>  ";		
+			
+			wsstr = wsstr +`
+			
+			 
+				    window.addEventListener("load",()=>{quicklink.listen()});
+	
+			   </script> 
+			
+			
+			`;			
+		}
 		
 		wsstr = minify(wsstr, {
-	                   removeComments:            true,
-	                      collapseWhitespace:        true,
-	                      collapseBooleanAttributes: true,
-	                      removeAttributeQuotes:     true,
-	                      removeEmptyAttributes:     true,
-	                   minifyJS:                  true
-	                });
+           removeComments:            true,
+              collapseWhitespace:        true,
+              collapseBooleanAttributes: true,
+              removeAttributeQuotes:     true,
+              removeEmptyAttributes:     true,
+           minifyJS:                  true
+        });
+			
 		
 		var modHtml = prevUtilsObj.insertTag(wsstr, html);
 		
