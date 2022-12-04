@@ -17,6 +17,7 @@ It also starts expressjs server to preview site
 const { program } = require('commander');
 const express = require('express');
 const path = require('path');
+const { Table } = require('console-table-printer');
 
 const { exec } = require("child_process");
 const execFile = require('child_process').execFile;
@@ -48,6 +49,9 @@ const createSiteObj = new createSite();
 
 const awsManager = require('./deploy/awsManager.js')
 const awsManagerObj = new awsManager();
+
+const prevUtils = require('./main/utils.js')
+const prevUtilsObj = new prevUtils();
 //### end of required internal classes
 
 
@@ -244,6 +248,18 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--create")
 	
 }	
 
+//--create argument to create a new prevjs site structure to a specific folder
+if(process.argv.length == 5 && process.argv[2].trim() == "--create")
+{
+	argPresent = true;
+	console.log("Creating site");
+	global.pconfig = new Object();
+	global.pconfig.createdir = process.argv[4].trim();
+	
+	createSiteObj.createLocal(process.argv[3].trim());
+	
+}
+
 //--deploy argument to deploy an exported prevjs site to AWS. Depends upon already setup aws command
 if(process.argv.length == 4 && process.argv[2].trim() == "--deploy" && process.argv[3].includes("recipe.json"))
 {
@@ -271,6 +287,50 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--deploy" && process.a
 	
 	
 }	
+
+
+//--list-recipes argument to deploy an exported prevjs site to AWS. Depends upon already setup aws command
+if(process.argv.length == 4 && process.argv[2].trim() == "--list-recipes" && process.argv[3].trim() == "local")
+{
+	argPresent = true;
+	
+		
+	listLocalRecipes();
+	
+	
+}
+
+
+if(process.argv.length == 3 && process.argv[2].trim() == "--list-recipes")
+{
+	argPresent = true;
+	
+		
+	listLocalRecipes();
+	
+	
+}		
+
+function listLocalRecipes()
+{
+	console.log("Listing local recipes");
+	
+	var srcDataDir = path.join(__dirname, "recipes/list.json");
+	
+	
+	fs.readFile(srcDataDir, "utf8", (err, jsonString) => {
+		  
+		var obj = JSON.parse(jsonString);
+		
+		const p = new Table();
+		p.addRows(obj, { color: 'blue' });
+
+
+		p.printTable();
+		process.exit();
+		
+	});
+}
 
 
 
@@ -304,9 +364,11 @@ process.on('unhandledRejection', (reason, promise) => {
 program
   .name('prevjs')
   .description('Static website builder')
-  .version('0.1.2')
+  .version('0.1.4')
+  .option('--list-recipes local','List locally available website recipes')
   .option('--create <path-to-create-new-site>','Enter local path for creating a new prevjs site')
-  .option('--run <path-to-recipe.json>','To preview webite in local server')
+  .option('--create <recipe-id> <path-to-create-new-site>','Enter local path to install a particular recipe')
+  .option('--run <path-to-recipe.json>','To preview website in local server')
   .option('--export <path-to-recipe.json>','To export website')
   .option('--deploy <path-to-recipe.json>','To deploy exported website');
 
@@ -314,17 +376,12 @@ program.parse();
 
 const options = program.opts();
 
-if (process.argv.length < 4) 
-{
-  program.help();
-}
-else
-{
+
 	if(!argPresent)
 	{
 		 program.help();
 	}
-}
+
 
 
 
