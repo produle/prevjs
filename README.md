@@ -15,7 +15,7 @@ PrevJS is a super-easy static website generator built on top of EJS templates. I
 * 🧩 PrevJS sites can be **part of your existing website**. Since a prevjs site has almost no dependencies or node modules. It can be part of your existing website even if it is a JSP or PHP site.
 * 😍 **Live preview** of site - no reloading of webpages after editing
 * 😇 **Future-proof**, the code both in development and export is web native as it requires no special modifications or libraries (except ejs). Which means even in the un-likely event PrevJS is not maintained, your code will not go bust like other un-maintained site generators.
-* Ⓜ️ Supports **markdown websites** natively. Convert website with .md files to html along with styling and script.
+* Ⓜ️ Supports **markdown websites** natively. Convert website with .md files to html along with styling and script. Example: https://prevjs.com
 
 
 # How to use
