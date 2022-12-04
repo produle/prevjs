@@ -113,7 +113,9 @@ Each template folder inside TEMPLATES should contain the following files with th
 
 
 ```
-
+## Tips
+To setup absolute paths to assets inside the ejs files, Use this variable ```<%= siteobj.urlpath =>```
+It comes with a trailing slash and automatically detects between local and production environments.
 
 ## About EJS
 To know more about EJS and how to create websites with EJS templates check their website https://ejs.co/
