@@ -129,8 +129,8 @@ class pageRenderer
 			
 			    webSocket.onmessage = (event) => {
 			     
-					
-					if(prevjs_localpathvar == event.data)
+					//TODO need more precise rendering
+					//if(prevjs_localpathvar == event.data)
 			     	location.reload();
 			     	
 			    };
@@ -140,7 +140,15 @@ class pageRenderer
 		
 		`;
 		
-		var wsstr = UglifyJS.minify(wsstr);
+		
+		wsstr = minify(wsstr, {
+	                   removeComments:            true,
+	                      collapseWhitespace:        true,
+	                      collapseBooleanAttributes: true,
+	                      removeAttributeQuotes:     true,
+	                      removeEmptyAttributes:     true,
+	                   minifyJS:                  true
+	                });
 		
 		var modHtml = prevUtilsObj.insertTag(wsstr, html);
 		
