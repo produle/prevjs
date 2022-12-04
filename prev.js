@@ -364,7 +364,7 @@ process.on('unhandledRejection', (reason, promise) => {
 program
   .name('prevjs')
   .description('Static website builder')
-  .version('0.1.4')
+  .version('0.1.5')
   .option('--list-recipes local','List locally available website recipes')
   .option('--create <path-to-create-new-site>','Enter local path for creating a new prevjs site')
   .option('--create <recipe-id> <path-to-create-new-site>','Enter local path to install a particular recipe')

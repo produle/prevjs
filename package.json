@@ -1,6 +1,6 @@
 {
   "name": "@produle/prevjs",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Static website builder",
   "main": "prev.js",
   "scripts": {
