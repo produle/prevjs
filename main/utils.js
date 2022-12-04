@@ -1,4 +1,14 @@
 
+/*
+
+File: utils.js
+
+Description:
+
+All common utility functions are called from here
+
+*/
+
 
 class prevUtils
 {

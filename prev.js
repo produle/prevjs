@@ -1,11 +1,29 @@
 #!/usr/bin/env node
+
+/*
+
+File: prev.js
+
+Description:
+
+Main entry point of prevjs command line tool
+It processes recipe.json and calls other classes to peform operations
+It also starts expressjs server to preview site
+
+*/
+
+//### start of required external libraries
+
 const { program } = require('commander');
 const express = require('express');
 const path = require('path');
+
 const { exec } = require("child_process");
 const execFile = require('child_process').execFile;
 const execSync = require('child_process').execSync;
+
 const process = require('process');
+
 const {resolve} = require('path');
 const resolvepath = require('path').resolve;
 const fs = require('fs');
@@ -15,11 +33,10 @@ const chokidar = require('chokidar');
 var minify = require('html-minifier').minify;
 var minifyHTML = require('express-minify-html');
 
+//### end of required external libraries
 
-//required variables
 
-
-//required classes
+//### start of required internal classes
 const pageRenderer = require('./main/page-renderer.js')
 const pageRendererObj = new pageRenderer();
 
@@ -31,8 +48,10 @@ const createSiteObj = new createSite();
 
 const awsManager = require('./deploy/awsManager.js')
 const awsManagerObj = new awsManager();
+//### end of required internal classes
 
-//required default directories
+
+//### start of global variables
 var DEFAULT_DIRS = new Object();
 DEFAULT_DIRS["DRAFTS"] = true;
 DEFAULT_DIRS["STATIC"] = true;
@@ -40,15 +59,12 @@ DEFAULT_DIRS["PARTIALS"] = true;
 DEFAULT_DIRS["TEMPLATES"] = true;
 
 global.DEFAULT_DIRS = DEFAULT_DIRS;
-
 global.DEBUG = true;
 global.LOCAL_PREVIEW = false;
 
 global.pconfig = new Object();
 
-//required global variables
 global.app = express();
-
 
 //minification configuration
 global.app.use(minifyHTML({
@@ -67,7 +83,6 @@ global.app.use(minifyHTML({
 //Set the view engine to ejs
 global.app.set('view engine', 'ejs');
 
-
 //parse request body as JSON post request
 global.app.use(express.json());
 
@@ -76,9 +91,12 @@ global.app.use(express.urlencoded({
     extended: true
 }))
 
+//### end of global variable
+
+//to check if an command line argument matched
 var argPresent = false;
 
-
+//parse recipe.json file and set global variables
 function processRecipe(recipe)
 {
 	try {
@@ -95,6 +113,7 @@ function processRecipe(recipe)
 			if(!global.pconfig.port)
 			global.pconfig.port = 3000;
 			
+			//local path of website folder
 			global.pconfig.localpath = recipe.replace("recipe.json","");			
 			
 			if(!global.pconfig.production_url)
@@ -106,12 +125,12 @@ function processRecipe(recipe)
 			if(!global.pconfig.createdir)
 			global.pconfig.createdir = recipe;			
 			
+			//global expressjs static folder path
 			global.app.use(express.static(global.pconfig.localpath+'STATIC'));
 						
 			//Set the view folder
 			global.app.set('views', global.pconfig.localpath);
 			
-
 		}
 		else
 		{
@@ -130,7 +149,7 @@ function processRecipe(recipe)
 	
 }
 
-
+//--run argument for starting local server to preview website
 if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv[3].includes("recipe.json"))
 {
 	argPresent = true;
@@ -139,20 +158,34 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv
 	
 	var wssadded = false;
 	
+	//expressjs server to start listening
 	global.app.listen(global.pconfig.port, () => {
 		
+		//watch for any file changes
 		chokidar.watch(global.pconfig.localpath, {ignoreInitial: true}).on('all', (event, path) => {
 			
 			if(wss)
 			{
-				wss.clients.forEach((client) => {
+				//send to all clients based on file changes
+				
+				//TODO: Need better handling of which client needs to be updated
+				
+				try
+				{
+					wss.clients.forEach((client) => {
+						
+						//prune path variable from chokidar to match with browser client's address
+						path = path.replace(global.pconfig.localpath,"");
+						path = path.replace("/index.ejs","");
+						path = path.replace("index.ejs","");
+						
+		    			client.send(path);
+		  			});
+				}
+				catch(e)
+				{
 					
-					path = path.replace(global.pconfig.localpath,"");
-					path = path.replace("/index.ejs","");
-					path = path.replace("index.ejs","");
-					
-	    			client.send(path);
-	  			});
+				}
 			}
 		 });
 				
@@ -161,13 +194,15 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv
 		
 		const wss = new WebSocket.Server({ port: 7071 });
 
+		//Handle incoming message from browser clients
 		 wss.on('message', (messageAsString) => {
 			
 			//alert(messageAsString);
 			
+			
 		 });	
 	
-			
+		//Enable local preview flag
 	    global.LOCAL_PREVIEW = true;
 		global.pconfig.local_url = "http://localhost:"+global.pconfig.port;
 		console.log("Local preview server running on URL: "+global.pconfig.local_url);
@@ -176,7 +211,7 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv
 	
 }	
 
-
+//--export argument to export prevjs site to a specific folder
 if(process.argv.length == 4 && process.argv[2].trim() == "--export" && process.argv[3].includes("recipe.json"))
 {
 	argPresent = true;
@@ -185,11 +220,9 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--export" && process.a
 	
 	exportSiteObj.export();
 
-	
-	
 }	
 
-
+//--create argument to create a new prevjs site structure to a specific folder
 if(process.argv.length == 4 && process.argv[2].trim() == "--create")
 {
 	argPresent = true;
@@ -197,12 +230,11 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--create")
 	global.pconfig = new Object();
 	global.pconfig.createdir = process.argv[3];
 	
-	createSiteObj.createBasic();
-
-	
+	createSiteObj.createLocal('basic');
 	
 }	
 
+//--deploy argument to deploy an exported prevjs site to AWS. Depends upon already setup aws command
 if(process.argv.length == 4 && process.argv[2].trim() == "--deploy" && process.argv[3].includes("recipe.json"))
 {
 	argPresent = true;
@@ -234,14 +266,13 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--deploy" && process.a
 
 //Declare routes
 
-//Preview
+//Preview website in local (Note: not for production use)
 global.app.get('/*', (req, res) => {
 
 	 if(global.LOCAL_PREVIEW)
 	 pageRendererObj.previewPage(req,res);
 
 });
-
 
 
 //Error handling to prevent app from crashing

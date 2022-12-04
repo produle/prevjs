@@ -1,20 +1,35 @@
 
+
+/*
+
+File: create.js
+
+Description:
+
+To create new prevjs based sites for the user. Gives a boilerplate for the user to work with.
+
+*/
+
+
+//### start of required external libraries
+
 const path = require('path');
 const fs = require('fs-extra');
 
+//### end of required external libraries
 
 class createSite
 {
 
-    createBasic()
+	//Copy from local prevjs recipe store to destination directory given by user
+    createLocal(type)
     {
 		var self = this;
-		
-		
-        if (!fs.existsSync(global.pconfig.createdir)) {
-         
+						
+		//createdir contains destination dir
+        if (!fs.existsSync(global.pconfig.createdir)) 
+		{         
 			fs.mkdirSync(global.pconfig.createdir);
-
         }
 
 		global.pconfig.createdir = global.pconfig.createdir.replace(/\/$/, '');
@@ -30,7 +45,8 @@ class createSite
 
         }
 
-		var srcDataDir = path.join(__dirname, "../recipes/basic");
+		//srcDataDir contains path to recipe in local recipe store
+		var srcDataDir = path.join(__dirname, "../recipes/"+type);
 
 		fs.copySync(srcDataDir, fpath, { overwrite: true });
 		

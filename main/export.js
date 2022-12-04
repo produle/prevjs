@@ -1,5 +1,18 @@
 
 
+/*
+
+File: export.js
+
+Description:
+
+Exports prevjs site to a static website in a local dir that is optimized based on variables set in recipe.json
+
+*/
+
+
+//### start of required external libraries
+
 const dirTree = require("directory-tree");
 
 var ncp = require('ncp').ncp;
@@ -11,18 +24,25 @@ var cleanCSS = require('clean-css');
 const fs = require('fs');
 const fetch = require('node-fetch');
 
+//### end of required external libraries
+
+//### start of required internal classes
+
 const imageOptimizer = require('../main/image-optimize.js')
 const imageOptimizerObj = new imageOptimizer();
 
-
 const pageRenderer = require('../main/page-renderer.js')
 const pageRendererObj = new pageRenderer();
+//### end of required internal classes
 
+
+//global sitemap variable used during export for forming sitemap.xml file
 var sitemap = "";
 
 class exportSite
 {
 
+	//Called for rendering contents of each template folder under TEMPLATES dir
     exportTemplate = async function(templatepath,webparr)	
     {
     	var self = this;
@@ -39,6 +59,7 @@ class exportSite
 			
 					  var tempObj = JSON.parse(jsonString);
 						
+					  //generate the template only if its generate flag is set to true
 					  if(tempObj.generate == true || tempObj.generate == "true")
 			  		  {
 							 var prms = new Array();
@@ -46,6 +67,7 @@ class exportSite
 							var temparr = templatepath.split("/");
 							var tempname = temparr[temparr.length-1];
 						
+							//loop through all pages set inside template.json
 							for(var p=0;p<tempObj.pages.length;p++)
 							{
 								var page = tempObj.pages[p];
@@ -60,7 +82,7 @@ class exportSite
 															
 								 console.log("Compiling template for: "+page.path );
 							
-
+								 //form sitemap.xml
 				                  var sval = "<url>\n";
 				                  sval = sval + "<loc>"+global.pconfig.production_url+"/"+page.path+"</loc>\n";
 				
@@ -70,6 +92,7 @@ class exportSite
 
 								 sitemap = sitemap + sval;
                   				 
+								 //If inline data source, then just get the data and render the page
                   				 if(page.source == "inline")
                   				 {
 									 obj.data = page.data;								
@@ -77,9 +100,10 @@ class exportSite
 	                 				 prms.push(pageRendererObj.renderPage(ejspath,page.path,obj,htmlfile,webparr));
 								}
 								
+								//If remote data with json url. First fetch the data and then render the page
 								if(page.source == "jsonurl")
                   				 {
-
+								    //fetch the json from the url
 									prms.push(self.fetchPageData(page.dataurl).then((pdata) => {
 									    
 									     obj.data = pdata;
@@ -95,6 +119,7 @@ class exportSite
 								
 							}
 							
+							//On completetion of all the pages inside the template.json of this template
 							 Promise.all(prms).then(function(){
 								
 								resolve(true);
@@ -117,6 +142,7 @@ class exportSite
 		});	
 	};
 	
+	//utility function to get remote json data from URL
 	fetchPageData(dataurl)
     {
 	
@@ -140,6 +166,7 @@ class exportSite
       
      }
 	
+	//Utility function to list directories from a given path
 	getDirectories = (source, callback) =>
 	  readdir(source, { withFileTypes: true }, (err, files) => {
 	    if (err) {
@@ -153,12 +180,14 @@ class exportSite
 	    }
   	});
 	
+	//main export function which is the call of entry
     export()
     {
 		var self = this;
 		
        var prms = new Array();
-      //Refresh output directory before export
+
+	     //Refresh output directory before export
         if (fs.existsSync(global.pconfig.exportdir)) {
           fs.rmSync(global.pconfig.exportdir, {recursive: true});
 
@@ -180,6 +209,7 @@ class exportSite
 
             };
 
+			//Loop through images under images dir 
             const imgtree = dirTree(global.pconfig.exportdir+"images", { extensions: /\.(jpg|png)$/ });
 
             var farr = new Array();
@@ -204,28 +234,25 @@ class exportSite
                 var opath = obj.path.replace(global.pconfig.exportdir,"");
                 webparr.push(opath);
 
-                prms2.push(imageOptimizerObj.webpconvert(obj.path,npath));
+				//convert images to webp if possible
+                prms2.push(imageOptimizerObj.convertToWebP(obj.path,npath));
 
 
               }
 
             }
 
-
-			
-		
-
-			
-
+			//on completion all image optimizations
             Promise.all(prms2).then(function(){
 
+			   //loop through all js files under STATIC folder
                const jstree = dirTree(global.pconfig.exportdir+"js/internal", { extensions: /\.js/ });
-
 
                 for(var h=0; h < jstree.children.length; h++)
                 {
                   var obj = jstree.children[h];
 
+				  //minimize the js files one by one
                   fs.writeFileSync(obj.path, UglifyJS.minify({
                     "file.js": fs.readFileSync(obj.path, "utf8")
                   }, options).code, "utf8");
@@ -235,12 +262,13 @@ class exportSite
 
                 }
 
+				//loop through all css files under STATIC folder
                 const csstree = dirTree(global.pconfig.exportdir+"css/internal", { extensions: /\.css/ });
 
 
                 for(var h=0; h < csstree.children.length; h++)
                 {
-                  var obj = csstree.children[h];
+                    var obj = csstree.children[h];
 
                     var cssf = fs.readFileSync(obj.path, "utf-8");
 
@@ -248,6 +276,7 @@ class exportSite
                    {
                       var replace = webparr[n];
 
+					  //replace any existing image files to webp
                       var destplace = replace.replace(".jpg",".webp");
                        destplace = replace.replace(".png",".webp");
 
@@ -255,6 +284,7 @@ class exportSite
                       cssf = cssf.replace(re,destplace)
                     }
 
+				  //minify the css file
                   var cssoutput = new cleanCSS({
                     sourceMap: true
                   }).minify(cssf);
@@ -267,13 +297,14 @@ class exportSite
                 }
 
 
-
+			  //start sitemap xml
               sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
               sitemap = sitemap + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
 
               //get all paths with ejs files
-                const domtree = dirTree(global.pconfig.localpath, { extensions: /\.ejs/ });
+                
+			  const domtree = dirTree(global.pconfig.localpath, { extensions: /\.ejs/ });
 
               for(var h=0; h < domtree.children.length; h++)
               {
@@ -320,10 +351,12 @@ class exportSite
 
                   sitemap = sitemap + sval;
 
+				  //export each ejs file
                   prms.push(pageRendererObj.renderPage(hpath,hpath,obj,htmlfile,webparr));
                 }
               }
 
+			 //loop and render all templates inside TEMPLATES dir
 			 const temptree = dirTree(global.pconfig.localpath+"TEMPLATES", { depth: 1 });
 		
 			
@@ -336,6 +369,7 @@ class exportSite
 	        			obj.path = temptree.children[j].path;
 	        			obj.name = temptree.children[j].name;
 	
+						//export each template folder
 						prms.push(self.exportTemplate(obj.path,webparr));
 	
 					}
@@ -343,15 +377,15 @@ class exportSite
 	
 				}
 
-
+			  //final promise call after completing the above
               Promise.all(prms).then(function(){
 	
-				
+					//write sitemap.xml at the end
               		sitemap = sitemap + '</urlset>';
               		fs.writeFileSync(global.pconfig.exportdir+"sitemap.xml", sitemap);
 
                   console.log("Exported to " + global.pconfig.exportdir);
-                process.exit();
+                  process.exit();
 
                }).catch(function(err){
                       console.log(err);
@@ -365,7 +399,7 @@ class exportSite
 
 
                 });
-            //process.exit();
+           
           });
 
 
@@ -374,7 +408,8 @@ class exportSite
 
     }
     
-	 getFlatStructure(flatarr,arr)
+	//utility function to get directory hierarchy
+	getFlatStructure(flatarr,arr)
     {
 		var self = this;
       for(var j=0;j<arr.length;j++)

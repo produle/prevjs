@@ -1,4 +1,18 @@
 
+/*
+
+File: page-renderer.js
+
+Description:
+
+Used for exporting ejs file to html file
+
+Used for previewing ejs file in browser
+
+*/
+
+//### start of required external libraries
+
 const dirTree = require("directory-tree");
 
 const express = require('express');
@@ -11,34 +25,34 @@ const fs = require('fs');
 
 const fetch = require('node-fetch');
 
+//### end of required external libraries
+
 class pageRenderer
 {
-	
+	//utility function to get json data from URL. Used for dynamic templates
 	fetchPageData(dataurl)
     {
 	
-      return new Promise((resolve, reject) => {
-      
-      		fetch(dataurl, { method: "Get" })
-		    .then(res => res.json())
-		    .then((json) => {
-		       	
-	
-		 			
-		 			resolve(json);
-		 
-	
-		    }).
-			  catch(error => {
-			      reject(false);
-			}); 
-      
-      });
+	      return new Promise((resolve, reject) => {
+	      
+	      		fetch(dataurl, { method: "Get" })
+			    .then(res => res.json())
+			    .then((json) => {
+			       	
+			 			resolve(json);
+			 
+			    }).
+				  catch(error => {
+				      reject(false);
+				}); 
+	      
+	      });
       
      }
 	
 
-   renderPage(ejspath,outpath,obj,htmlfile,webparr)
+  //Convert from ejs to html format - used for site export
+  renderPage(ejspath,outpath,obj,htmlfile,webparr)
   {
 	
       return new Promise((resolve, reject) => {
@@ -54,7 +68,7 @@ class pageRenderer
               }
               else {
 
-
+				 //replace image paths with webp when applicable
                  for(var n=0; n < webparr.length; n++)
                  {
                     var replace = webparr[n];
@@ -67,6 +81,7 @@ class pageRenderer
                     html = html.replace(re,destplace)
                   }
 
+			  //minify html before export
               html = minify(html, {
                    removeComments:            true,
                       collapseWhitespace:        true,
@@ -77,6 +92,7 @@ class pageRenderer
                 });
 
 
+			  //write final html file to export directory set by user
               var opath = global.pconfig.exportdir+outpath;
 
               fs.mkdirSync(opath, { recursive: true });
@@ -86,8 +102,7 @@ class pageRenderer
                 opath = opath + "/";
               }
 
-
-              fs.writeFileSync(opath+htmlfile, html);
+               fs.writeFileSync(opath+htmlfile, html);
 
                resolve(true);
 
@@ -103,12 +118,16 @@ class pageRenderer
       });
     }
 
+	//Parse and inject js into html files before rendering or export
 	modifyHTML(html,path)
 	{
-		var str = "<script> var prevjs_localpathvar='"+path+"'; ";
+		//insert socket code, used in local preview and not export
+		//This helps in auto-reloading page in browser whenever local changes happen
+		//It communicates with preview server via sockets
 		
+		var wsstr = "<script> var prevjs_localpathvar='"+path+"'; ";		
 		
-		str = str +`
+		wsstr = wsstr +`
 		
 		 
 			    let webSocket = new WebSocket("ws://localhost:7071");
@@ -128,17 +147,19 @@ class pageRenderer
 		`;
 		
 		
-		var modHtml = insertTag(str, html);
+		var modHtml = insertTag(wsstr, html);
 		
 		return modHtml;
 		
 
 	}
 
+	//preview page or site in localhost
     previewPage (req,res)
     {
 		var self = this;
 
+		//TODO: this code needs to be modified as browser defaults to this location for favicons
 		if(req.originalUrl.includes(".ico"))
 		return;
 		
@@ -149,21 +170,29 @@ class pageRenderer
       			var obj = new Object();
       			obj.urlpath = global.pconfig.local_url+"/";
 
-
+				//expressjs response render in server
       			 res.render(surl, {siteobj: obj}, function (err, html) {
 
       				  if (err) {
-						console.log(err);
-						//check if it is a template path
+		
+						//Store main error of ejs, do not throw until dynamic template check is complete
+						//as it can be a path to a dynamic template
+						
+						var mainErr = err
+						//console.log(err);
+						
+						
+						//check if it is a dynamic template path under TEMPLATES dir
 						console.log("Checking if it is a template path...");
 						
-					 	const temptree = dirTree(global.pconfig.localpath+"TEMPLATES", { depth: 1 });
+					  	const temptree = dirTree(global.pconfig.localpath+"TEMPLATES", { depth: 1 });
 				
-					  var pageobj = null;
+					  	var pageobj = null;
 						
-					   for(var j=0;j<temptree.children.length;j++)
-				       {
-							
+						//This code is taken and modified from export class
+					  	for(var j=0;j<temptree.children.length;j++)
+				       	{
+							//check each path in all template dirs
 							if(fs.lstatSync(temptree.children[j].path).isDirectory())
 							{
 			        			var obj = new Object();
@@ -174,12 +203,13 @@ class pageRenderer
 								
 								if (fs.existsSync(templatepath+"/template.json")) {
 						    	
-									var jsonString = fs.readFileSync(templatepath+"/template.json", "utf8");
+									
+								  var jsonString = fs.readFileSync(templatepath+"/template.json", "utf8");
 								  
 						
 								  var tempObj = JSON.parse(jsonString);
 						
-									
+								  //Continue only if generate flag is true
 								  if(tempObj.generate == true || tempObj.generate == "true")
 						  		  {
 									
@@ -190,7 +220,7 @@ class pageRenderer
 										{
 											var page = tempObj.pages[p];
 											
-											
+											//if dynamic path matches path requested by user
 											if(page.path == surl)
 											{
 												
@@ -209,10 +239,6 @@ class pageRenderer
 										
 								  }
 						
-									
-								
-								
-			  					
 						
 								}
 			
@@ -221,11 +247,13 @@ class pageRenderer
 
 						}
 						
+						//Path matched with dynamic template
 						if(pageobj)
 						{
 							
-				 				var ejspath = "templates/"+pageobj.tempname+"/template.ejs";
+				 			 var ejspath = "templates/"+pageobj.tempname+"/template.ejs";
               				 
+							 //render page if data source is inline
               				 if(pageobj.page.source == "inline")
               				 {
 								 obj.data = pageobj.page.data;	
@@ -233,15 +261,19 @@ class pageRenderer
 								res.render(ejspath, {siteobj: obj}, function (err, html) {	
 									if(err)
 									{
+										console.log("### START OF RENDER ERROR");
+										console.log(err);
+										console.log("### END OF RENDER ERROR");
 										console.log("Error displaying " + obj.urlpath+""+surl);
       				    				res.status(500).send("Server error! Try again.");
 									}	
 									else
-									res.send(self.modifyHTML(html,surl));						
+										res.send(self.modifyHTML(html,surl));						
 								 
 								});
 							}
 							
+							//render page if data source is remote json url
 							if(pageobj.page.source == "jsonurl")
               				 {
 
@@ -252,11 +284,14 @@ class pageRenderer
 									res.render(ejspath, {siteobj: obj}, function (err, html) {
 										if(err)
 										{
+											console.log("### START OF RENDER ERROR");
+											console.log(err);
+											console.log("### END OF RENDER ERROR");
 											console.log("Error displaying " + obj.urlpath+""+surl);
 	      				    				res.status(500).send("Server error! Try again.");
 										}	
 										else
-										res.send(self.modifyHTML(html,surl));								
+											res.send(self.modifyHTML(html,surl));								
 								 
 									});						
 							
@@ -268,14 +303,19 @@ class pageRenderer
 						}
 						else
 						{
+							//throw main error if none of template paths matched
+							console.log("### START OF RENDER ERROR");
+							console.log(mainErr);
+							console.log("### END OF RENDER ERROR");
 							
       						console.log("Error displaying " + obj.urlpath+""+surl);
       				    	res.status(500).send("Server error! Try again.");
 						}
       				  }
-      				  else {
-	
-      				    res.send(self.modifyHTML(html,surl));
+      				  else 
+					  {
+							//render if direct path is available
+      				    	res.send(self.modifyHTML(html,surl));
       				  }
       			});
 
@@ -291,6 +331,7 @@ class pageRenderer
 
 module.exports = pageRenderer
 
+//utility external function to modify html
 String.prototype.htmlsplice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
