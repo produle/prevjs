@@ -160,6 +160,11 @@ class prevUtils
 	  var end = html.indexOf('</head>');
 	  return html.htmlsplice(end, 0, newTag);
 	}
+	
+	
+	removeTrailingSlash(str) {
+  		return str.replace(/\/+$/, '');
+	}
 
 };
 

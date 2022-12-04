@@ -29,7 +29,8 @@
     "node-fetch": "~2.6.1",
     "chokidar": "~3.5.3",
     "ws": "~8.11.0",
-    "console-table-printer": "~2.11.1"
+    "console-table-printer": "~2.11.1",
+    "markdown-it": "~13.0.1"
   },
   "devDependencies": {},
   "repository": {

@@ -22,6 +22,8 @@ var minifyHTML = require('express-minify-html');
 var UglifyJS = require('uglify-js');
 var cleanCSS = require('clean-css');
 const fs = require('fs');
+var MarkdownIt = require('markdown-it');
+const md = new MarkdownIt();
 
 
 //### end of required external libraries
@@ -181,6 +183,40 @@ class pageRenderer
 		
 
 	}
+	
+	getFullMarkDownHTML (mdhtml,title)
+    {
+		var str = `<!DOCTYPE html>
+				<html lang="en">
+				    <head>
+				`;
+				
+		str = str + "<title>"+title+"</title>";
+							
+						
+		if(global.pconfig.markdown && global.pconfig.markdown.style)
+		{
+			if(global.pconfig.markdown.style.trim() != '')
+			{
+				str = str + '<link rel="stylesheet" type="text/css" href="/'+global.pconfig.markdown.style+'" />'
+			}
+		}				    
+			
+			
+		if(global.pconfig.markdown && global.pconfig.markdown.script)
+		{
+			if(global.pconfig.markdown.script.trim() != '')
+			{
+				str = str + '<script type="text/javascript" src="/'+global.pconfig.markdown.script+'"></script>'
+			}
+		}				  
+				
+		str = str + "	   </head><body>";
+		str = str + mdhtml;
+		str = str + "</body></html>";
+		
+		return str;
+	}
 
 	//preview page or site in localhost
     previewPage (req,res)
@@ -200,8 +236,62 @@ class pageRenderer
 
 				//expressjs response render in server
       			 res.render(surl, {siteobj: obj}, function (err, html) {
+	
 
       				  if (err) {
+	
+						try
+						{
+							//check if it is markdown
+							var mdpath = global.pconfig.localpath+""+surl;
+							
+							if (!fs.existsSync(mdpath+".md")) 
+							{							
+								if(!mdpath.includes(".md"))
+								{
+									mdpath = prevUtilsObj.removeTrailingSlash(mdpath);
+									mdpath = mdpath + "/";
+								}
+								
+								var sarr = mdpath.split("/");
+														
+								if(sarr[sarr.length-1] == "")
+								mdpath = mdpath + "index.md";
+							}
+							
+							
+							var mdFile = false;		
+							
+							if (fs.existsSync(mdpath)) 
+							{
+								mdFile = true;
+								
+								var mdString = fs.readFileSync(mdpath, "utf8");
+															
+								var mdTitle = global.pconfig.name + " - ";
+								
+								if(surl.trim() == "")
+								{
+									mdTitle = "Homepage";
+								}
+								else
+								{
+									mdTitle = surl;
+								}
+	
+								html = md.render(mdString,mdTitle);
+								html = self.getFullMarkDownHTML(html);
+								
+								res.send(self.modifyHTML(html,surl));
+								
+								return;
+		
+							}
+						}
+						catch(e)
+						{
+							console.log(e);
+						}
 		
 						//Store main error of ejs, do not throw until dynamic template check is complete
 						//as it can be a path to a dynamic template
