@@ -187,28 +187,29 @@ class exportSite
 			}
 			else
 			{
-	            const imgtree = dirTree(global.pconfig.exportdir+"images", { extensions: /\.(jpg|png)$/ });
-	
-	            var farr = new Array();
-	            prevUtilsObj.getFlatStructure(farr,imgtree.children);
+	           
+				var farr = new Array();
+				prevUtilsObj.getAllFiles(global.pconfig.exportdir+"images",farr,[".jpg",".png"]);
+
+	            //prevUtilsObj.getFlatStructure(farr,imgtree.children);
 	
 	            for(var h=0; h < farr.length; h++)
 	            {
 	              var obj = farr[h];
 	
-	              if(obj.path.includes(".png") || obj.path.includes(".jpg"))
+	              if(obj.includes(".png") || obj.includes(".jpg"))
 	              {
-	                var npath = obj.path.replace(".png",".webp");
-	                npath = obj.path.replace(".jpg",".webp");
+	                var npath = obj.replace(".png",".webp");
+	                npath = obj.replace(".jpg",".webp");
 	
 	                var narr = npath.split("/");
 	                npath = npath.replace(narr[narr.length-1],"");
 	
-	                var opath = obj.path.replace(global.pconfig.exportdir,"");
+	                var opath = obj.replace(global.pconfig.exportdir,"");
 	                webparr.push(opath);
 	
 					//convert images to webp if possible
-	                prms2.push(imageOptimizerObj.convertToWebP(obj.path,npath));
+	                prms2.push(imageOptimizerObj.convertToWebP(obj,npath));
 	
 	
 	              }
@@ -226,20 +227,26 @@ class exportSite
 				else
 				{
 				   //loop through all js files under STATIC folder
-	               const jstree = dirTree(global.pconfig.exportdir+"js/internal", { extensions: /\.js/ });
 	
-	                for(var h=0; h < jstree.children.length; h++)
+				   var jstree = new Array();
+				   prevUtilsObj.getAllFiles(global.pconfig.exportdir+"js/internal",jstree,[".js"]);
+
+	                for(var h=0; h < jstree.length; h++)
 	                {
-	                  var obj = jstree.children[h];
-	
-					  //minimize the js files one by one
-	                  fs.writeFileSync(obj.path, UglifyJS.minify({
-	                    "file.js": fs.readFileSync(obj.path, "utf8")
-	                  }, options).code, "utf8");
-	
-	
-	                  console.log("Minifying JS: "+obj.path);
-	
+	                  	var obj = jstree[h];
+
+						if(obj.includes(".js"))
+		                {
+		
+						  //minimize the js files one by one
+		                  fs.writeFileSync(obj, UglifyJS.minify({
+		                    "file.js": fs.readFileSync(obj, "utf8")
+		                  }, options).code, "utf8");
+		
+		
+		                  console.log("Minifying JS: "+obj);
+						}
+		
 	                }
 				}
 				
@@ -251,36 +258,41 @@ class exportSite
 				{
 
 					//loop through all css files under STATIC folder
-	                const csstree = dirTree(global.pconfig.exportdir+"css/internal", { extensions: /\.css/ });
+	
+					var csstree = new Array();
+				   prevUtilsObj.getAllFiles(global.pconfig.exportdir+"css/internal",csstree,[".css"]);
 	
 	
-	                for(var h=0; h < csstree.children.length; h++)
+	                for(var h=0; h < csstree.length; h++)
 	                {
-	                    var obj = csstree.children[h];
-	
-	                    var cssf = fs.readFileSync(obj.path, "utf-8");
-	
-	                   for(var n=0; n < webparr.length; n++)
-	                   {
-	                      var replace = webparr[n];
-	
-						  //replace any existing image files to webp
-	                      var destplace = replace.replace(".jpg",".webp");
-	                       destplace = replace.replace(".png",".webp");
-	
-	                      var re = new RegExp(replace,"g");
-	                      cssf = cssf.replace(re,destplace)
-	                    }
-	
-					  //minify the css file
-	                  var cssoutput = new cleanCSS({
-	                    sourceMap: true
-	                  }).minify(cssf);
-	
-	                  fs.writeFileSync(obj.path, cssoutput.styles);
-	
-	                  console.log("Minifying CSS: "+obj.path);
-	
+	                    var obj = csstree[h];
+						
+						if(obj.includes(".css"))
+		                {
+							
+		                    var cssf = fs.readFileSync(obj, "utf-8");
+		
+		                   for(var n=0; n < webparr.length; n++)
+		                   {
+		                      var replace = webparr[n];
+		
+							  //replace any existing image files to webp
+		                      var destplace = replace.replace(".jpg",".webp");
+		                       destplace = replace.replace(".png",".webp");
+		
+		                      var re = new RegExp(replace,"g");
+		                      cssf = cssf.replace(re,destplace)
+		                    }
+		
+						  //minify the css file
+		                  var cssoutput = new cleanCSS({
+		                    sourceMap: true
+		                  }).minify(cssf);
+		
+		                  fs.writeFileSync(obj, cssoutput.styles);
+		
+		                  console.log("Minifying CSS: "+obj);
+						}
 	
 	                }
 				}
@@ -291,15 +303,18 @@ class exportSite
 
 
               //get all paths with ejs files
-                
-			  const domtree = dirTree(global.pconfig.localpath, { extensions: /\.ejs/ });
 
-              for(var h=0; h < domtree.children.length; h++)
+				
+				var domtree = new Array();
+				prevUtilsObj.getAllFiles(global.pconfig.localpath,domtree,[".ejs"]);
+
+                
+              for(var h=0; h < domtree.length; h++)
               {
 
-                var obj = domtree.children[h];
+                var obj = domtree[h];
 
-                var hpath = obj.path.replace(global.pconfig.localpath,"")
+                var hpath = obj.replace(global.pconfig.localpath,"")
 
                 var hpathArr = hpath.split("/");
 

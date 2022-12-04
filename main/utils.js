@@ -13,7 +13,8 @@ All common utility functions are called from here
 //### start of required external libraries
 
 const fetch = require('node-fetch');
-
+const path = require('path');
+const fs = require('fs');
 //### end of required external libraries
 
 
@@ -37,7 +38,7 @@ class prevUtils
 		
 	}
 
-	//utility function to get directory hierarchy
+	//utility function to get directory hierarchy as a single level object
 	getFlatStructure(flatarr,arr)
     {
 		var self = this;
@@ -76,6 +77,70 @@ class prevUtils
 	      });
       
      }
+
+	 getAllFiles(dirPath,arr,extensions)
+		{
+			var self = this;
+	      fs.readdirSync(dirPath).forEach(function(file) {
+	      let filepath = path.join(dirPath , file);
+	      let stat= fs.statSync(filepath);
+	      if (stat.isDirectory()) {            
+	        self.getAllFiles(filepath,arr,extensions);
+	      } else {
+		
+				if(extensions == null || extensions.length == 0)
+				{
+					arr.push(filepath);
+				}
+				else
+				{
+					for(var k=0;k<extensions.length;k++)
+					{
+						if(filepath.includes(extensions[k]))
+						{
+							arr.push(filepath);
+							break;
+						}
+					}
+				}
+				
+				
+	                              
+	      }    
+	  	});  
+	}
+	
+	 getFiles(dirPath, currentLevel, maxLevel,arr){
+	  if (currentLevel > maxLevel){
+	    return;
+	  }
+	  else{
+	      fs.readdirSync(dirPath).forEach(function(file) {
+	      let filepath = path.join(dirPath , file);
+	      let stat= fs.statSync(filepath);
+	      if (stat.isDirectory()) {            
+	        getFiles(filepath, currentLevel+1, maxLevel);
+	      } else {
+		
+	            if(extensions == null || extensions.length == 0)
+				{
+					arr.push(filepath);
+				}
+				else
+				{
+					for(var k=0;k<extensions.length;k++)
+					{
+						if(filepath.includes(extensions[k]))
+						{
+							arr.push(filepath);
+							break;
+						}
+					}
+				}                 
+	        }    
+	  });
+	  }
+	}
 
 	//Utility function to list directories from a given path
 	getDirectories = (source, callback) =>
