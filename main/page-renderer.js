@@ -23,32 +23,20 @@ var UglifyJS = require('uglify-js');
 var cleanCSS = require('clean-css');
 const fs = require('fs');
 
-const fetch = require('node-fetch');
 
 //### end of required external libraries
 
+
+
+//### start of required internal classes
+const prevUtils = require('../main/utils.js')
+const prevUtilsObj = new prevUtils();
+//### end of required internal classes
+
+
 class pageRenderer
 {
-	//utility function to get json data from URL. Used for dynamic templates
-	fetchPageData(dataurl)
-    {
 	
-	      return new Promise((resolve, reject) => {
-	      
-	      		fetch(dataurl, { method: "Get" })
-			    .then(res => res.json())
-			    .then((json) => {
-			       	
-			 			resolve(json);
-			 
-			    }).
-				  catch(error => {
-				      reject(false);
-				}); 
-	      
-	      });
-      
-     }
 	
 
   //Convert from ejs to html format - used for site export
@@ -147,7 +135,7 @@ class pageRenderer
 		`;
 		
 		
-		var modHtml = insertTag(wsstr, html);
+		var modHtml = prevUtilsObj.insertTag(wsstr, html);
 		
 		return modHtml;
 		
@@ -268,7 +256,10 @@ class pageRenderer
       				    				res.status(500).send("Server error! Try again.");
 									}	
 									else
-										res.send(self.modifyHTML(html,surl));						
+									{
+										console.log("...template: "+ surl);
+										res.send(self.modifyHTML(html,surl));
+									}						
 								 
 								});
 							}
@@ -277,7 +268,7 @@ class pageRenderer
 							if(pageobj.page.source == "jsonurl")
               				 {
 
-								self.fetchPageData(pageobj.page.dataurl).then((pdata) => {
+								prevUtilsObj.fetchPageData(pageobj.page.dataurl).then((pdata) => {
 								    
 								     obj.data = pdata;
 											
@@ -291,7 +282,10 @@ class pageRenderer
 	      				    				res.status(500).send("Server error! Try again.");
 										}	
 										else
-											res.send(self.modifyHTML(html,surl));								
+										{
+											console.log("...template: "+ surl);
+											res.send(self.modifyHTML(html,surl));
+										}							
 								 
 									});						
 							
@@ -331,12 +325,3 @@ class pageRenderer
 
 module.exports = pageRenderer
 
-//utility external function to modify html
-String.prototype.htmlsplice = function( idx, rem, s ) {
-    return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
-};
-
-var insertTag = function(newTag, html) {
-  var end = html.indexOf('</head>');
-  return html.htmlsplice(end, 0, newTag);
-}

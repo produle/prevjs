@@ -33,6 +33,9 @@ const imageOptimizerObj = new imageOptimizer();
 
 const pageRenderer = require('../main/page-renderer.js')
 const pageRendererObj = new pageRenderer();
+
+const prevUtils = require('../main/utils.js')
+const prevUtilsObj = new prevUtils();
 //### end of required internal classes
 
 
@@ -104,7 +107,7 @@ class exportSite
 								if(page.source == "jsonurl")
                   				 {
 								    //fetch the json from the url
-									prms.push(self.fetchPageData(page.dataurl).then((pdata) => {
+									prms.push(prevUtilsObj.fetchPageData(page.dataurl).then((pdata) => {
 									    
 									     obj.data = pdata;
 																		
@@ -142,44 +145,7 @@ class exportSite
 		});	
 	};
 	
-	//utility function to get remote json data from URL
-	fetchPageData(dataurl)
-    {
-	
-      return new Promise((resolve, reject) => {
-      
-      		fetch(dataurl, { method: "Get" })
-		    .then(res => res.json())
-		    .then((json) => {
-		       	
-	
-		 			
-		 			resolve(json);
-		 
-	
-		    }).
-			  catch(error => {
-			      reject(false);
-			}); 
-      
-      });
-      
-     }
-	
-	//Utility function to list directories from a given path
-	getDirectories = (source, callback) =>
-	  readdir(source, { withFileTypes: true }, (err, files) => {
-	    if (err) {
-	      callback(err)
-	    } else {
-	      callback(
-	        files
-	          .filter(dirent => dirent.isDirectory())
-	          .map(dirent => dirent.name)
-	      )
-	    }
-  	});
-	
+	//Utility functio
 	//main export function which is the call of entry
     export()
     {
@@ -213,7 +179,7 @@ class exportSite
             const imgtree = dirTree(global.pconfig.exportdir+"images", { extensions: /\.(jpg|png)$/ });
 
             var farr = new Array();
-            self.getFlatStructure(farr,imgtree.children);
+            prevUtilsObj.getFlatStructure(farr,imgtree.children);
 
             var prms2 = new Array();
 
@@ -408,25 +374,6 @@ class exportSite
 
     }
     
-	//utility function to get directory hierarchy
-	getFlatStructure(flatarr,arr)
-    {
-		var self = this;
-      for(var j=0;j<arr.length;j++)
-      {
-        var obj = new Object();
-        obj.path = arr[j].path;
-        obj.name = arr[j].name;
-
-        flatarr.push(obj);
-
-        if(arr[j].children)
-        {
-          self.getFlatStructure(flatarr,arr[j].children);
-        }
-      }
-    }
-
 
 
 };
