@@ -1,17 +1,17 @@
 # PrevJS
 
 ## About 
-PrevJS is a super-easy static website builder built on top of EJS templates. It's main goal is to build, optimize and deploy static websites with much less work.
+PrevJS is a super-easy static website generator built on top of EJS templates. It's main goal is to build, optimize and deploy static websites with much less work.
 
 ## Features
-* Create - Created for front-end people who want to code in plain html, js and css. Which also means you can convert your existing static website into a prevjs site easily
-* Build - Export optimized for SEO with sitemap generation, page pre-fetching, webp conversion and minification. Scores 99 in Google pagespeed tool.
-* Deploy - Host to your CDN in a click. Out of box support for AWS CloudFront
-* Dynamic templates - Generate static webpages dynamically from JSON data with a single template. Useful for blog, doc
-* Dynamic template preview without export. Just enter the dynamic path in your browser and PrevJS will automatically load the page with related data
-* PrevJS sites can be part of your existing website. Since a prevjs site has almost no dependencies or node modules. It can be part of your existing website even if it is a JSP or PHP site.
-* Live preview of site - no reloading of webpages after editing
-* Future-proof, the code both in development and production is web native as it requires no special modifications or libraries (except ejs). Which means even in the un-likely event PrevJS is not maintained, your code will not go bust like other un-maintained site builders.
+* 🧑‍💻 Create - Created for front-end people who want to code in **plain html, js and css**. Which also means you can convert your existing static website into a prevjs site easily
+* ⏱ Build - Export **optimized for SEO** with sitemap generation, page pre-fetching, webp conversion and minification. Scores 99 in Google pagespeed tool.
+* 🎉 Deploy - Host to your CDN in a click. Out of box support for **AWS CloudFront**
+* 🎭 Dynamic templates - Generate **static webpages dynamically** from JSON data with a single template. Useful for blog, doc
+* 👀 **Dynamic template preview** without export. Just enter the dynamic path in your browser and PrevJS will automatically load the page with related data
+* 🧩 PrevJS sites can be **part of your existing website**. Since a prevjs site has almost no dependencies or node modules. It can be part of your existing website even if it is a JSP or PHP site.
+* 😍 **Live preview** of site - no reloading of webpages after editing
+* 😇 **Future-proof**, the code both in development and export is web native as it requires no special modifications or libraries (except ejs). Which means even in the un-likely event PrevJS is not maintained, your code will not go bust like other un-maintained site generators.
 
 
 # How to use
