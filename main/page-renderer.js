@@ -38,12 +38,115 @@ const prevUtilsObj = new prevUtils();
 
 class pageRenderer
 {
+  replaceImagePath(html,webparr)
+  {
+	 //replace image paths with webp when applicable
+     for(var n=0; n < webparr.length; n++)
+     {
+        var replace = webparr[n];
+
+        var destplace = replace.replace(".jpg",".webp");
+         destplace = replace.replace(".png",".webp");
+
+        var re = new RegExp(replace,"g");
+
+        html = html.replace(re,destplace)
+      }
+
+	 return html;
+  }
 	
+  //Convert from md to html format - used for site export
+  renderMarkdown(mdpath,outpath,obj,htmlfile,webparr)
+  {
+		var self = this;
+	
+      return new Promise((resolve, reject) => {
+          //compile ejs file and save to out folder
+		try
+		{
+				
+          		var mdString = fs.readFileSync(global.pconfig.localpath+""+mdpath, "utf8");
+
+															
+				var mdTitle = global.pconfig.name + " - ";
+				
+				mdpath = mdpath.replace("index.md","");
+				mdpath = mdpath.replace(".md","");
+				
+				if(mdpath.trim() == "")
+				{
+					mdTitle = "Homepage";
+				}
+				else
+				{
+					mdTitle = mdpath;
+				}
+
+				var html = "";
+				
+				
+							
+				var patharr = mdpath.split("/");
+				
+				var level = self.getLevel(patharr);
+				
+				html = md.render(mdString);
+				html = self.getFullMarkDownHTML(html,mdTitle,level);
+
+				html = self.replaceImagePath(html,webparr);
+
+			 html = self.modifyHTML(html,null);
+
+			  //minify html before export
+			 if(global.pconfig.optimize.minify_html == "false")
+			 {
+				//stub
+			 }
+			 else
+			 {
+	              html = minify(html, {
+	                   removeComments:            true,
+	                      collapseWhitespace:        true,
+	                      collapseBooleanAttributes: true,
+	                      removeAttributeQuotes:     true,
+	                      removeEmptyAttributes:     true,
+	                   minifyJS:                  true
+	                });
+			  }
+	
+
+			  //write final html file to export directory set by user
+              var opath = global.pconfig.exportdir+outpath;
+
+              fs.mkdirSync(opath, { recursive: true });
+
+              if(opath != "")
+              {
+                opath = opath + "/";
+              }
+
+               fs.writeFileSync(opath+htmlfile, html);
+
+               resolve(true);
+
+              
+            
+
+		}
+		catch(e)
+		{
+			reject(false);
+		}
+
+      });
+    }
 	
 
   //Convert from ejs to html format - used for site export
   renderPage(ejspath,outpath,obj,htmlfile,webparr)
   {
+	var self = this;
 	
       return new Promise((resolve, reject) => {
           //compile ejs file and save to out folder
@@ -58,19 +161,9 @@ class pageRenderer
               }
               else {
 
-				 //replace image paths with webp when applicable
-                 for(var n=0; n < webparr.length; n++)
-                 {
-                    var replace = webparr[n];
+				 html = self.replaceImagePath(html,webparr);
 
-                    var destplace = replace.replace(".jpg",".webp");
-                     destplace = replace.replace(".png",".webp");
-
-                    var re = new RegExp(replace,"g");
-
-                    html = html.replace(re,destplace)
-                  }
-
+			  html = self.modifyHTML(html,null);
 			  //minify html before export
 			 if(global.pconfig.optimize.minify_html == "false")
 			 {
@@ -184,13 +277,31 @@ class pageRenderer
 
 	}
 	
-	getFullMarkDownHTML (mdhtml,title)
+	getLevel (patharr)
+    {
+		var level = "./"
+							
+		if(patharr.length > 1)
+		{				
+			level = "";
+						
+			for(var j=0; j < patharr.length; j++)
+			{
+				level = level + "../";
+			}
+		}
+		
+		return level;
+	}
+	
+	getFullMarkDownHTML (mdhtml,title,level)
     {
 		var str = `<!DOCTYPE html>
 				<html lang="en">
 				    <head>
 				`;
 				
+		
 		str = str + "<title>"+title+"</title>";
 							
 						
@@ -198,7 +309,7 @@ class pageRenderer
 		{
 			if(global.pconfig.markdown.style.trim() != '')
 			{
-				str = str + '<link rel="stylesheet" type="text/css" href="/'+global.pconfig.markdown.style+'" />'
+				str = str + '<link rel="stylesheet" type="text/css" href="'+level+global.pconfig.markdown.style+'" />'
 			}
 		}				    
 			
@@ -207,7 +318,7 @@ class pageRenderer
 		{
 			if(global.pconfig.markdown.script.trim() != '')
 			{
-				str = str + '<script type="text/javascript" src="/'+global.pconfig.markdown.script+'"></script>'
+				str = str + '<script type="text/javascript" src="'+level+global.pconfig.markdown.script+'"></script>'
 			}
 		}				  
 				
@@ -245,8 +356,13 @@ class pageRenderer
 							//check if it is markdown
 							var mdpath = global.pconfig.localpath+""+surl;
 							
+							
+							var patharr = surl.split("/");
+							
+							var level = self.getLevel(patharr);
+							
 							if (!fs.existsSync(mdpath+".md")) 
-							{							
+							{					
 								if(!mdpath.includes(".md"))
 								{
 									mdpath = prevUtilsObj.removeTrailingSlash(mdpath);
@@ -258,6 +374,8 @@ class pageRenderer
 								if(sarr[sarr.length-1] == "")
 								mdpath = mdpath + "index.md";
 							}
+							else
+								mdpath = mdpath + ".md";
 							
 							
 							var mdFile = false;		
@@ -279,8 +397,8 @@ class pageRenderer
 									mdTitle = surl;
 								}
 	
-								html = md.render(mdString,mdTitle);
-								html = self.getFullMarkDownHTML(html);
+								html = md.render(mdString);
+								html = self.getFullMarkDownHTML(html,mdTitle,level);
 								
 								res.send(self.modifyHTML(html,surl));
 								

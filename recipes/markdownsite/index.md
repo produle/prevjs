@@ -1,7 +1,7 @@
 
-![Logo](/images/logo-100x100.png)
+![Logo](images/logo-100x100.png)
 
-[Security](/security/)  - [License](/license/)
+[Security](security/)  - [License](license/)
 
 # PrevJS
 

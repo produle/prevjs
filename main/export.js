@@ -306,7 +306,7 @@ class exportSite
 
 				
 				var domtree = new Array();
-				prevUtilsObj.getAllFiles(global.pconfig.localpath,domtree,[".ejs"]);
+				prevUtilsObj.getAllFiles(global.pconfig.localpath,domtree,[".ejs",".md"]);
 
                 
               for(var h=0; h < domtree.length; h++)
@@ -322,14 +322,18 @@ class exportSite
 
                 var htmlfile = "index.html";
 
+				var outpath = hpath;
+
                 if(ejsfile.includes("ejs"))
                 {
                   htmlfile = ejsfile.replace(".ejs",".html");
                   hpath = hpath.replace(ejsfile,"");
                 }
-                else
+
+                if(ejsfile.includes("md"))
                 {
-                  ejsfile = "index.ejs";
+                  htmlfile = ejsfile.replace(".md",".html");
+ 					outpath = outpath.replace(ejsfile,"");
                 }
 
 				var exportpatharr = global.pconfig.exportdir.split("/");
@@ -355,7 +359,11 @@ class exportSite
                   sitemap = sitemap + sval;
 
 				  //export each ejs file
+				  if(ejsfile.includes("md"))
+                  prms.push(pageRendererObj.renderMarkdown(hpath,outpath,obj,htmlfile,webparr));
+				  else
                   prms.push(pageRendererObj.renderPage(hpath,hpath,obj,htmlfile,webparr));
+
                 }
               }
 

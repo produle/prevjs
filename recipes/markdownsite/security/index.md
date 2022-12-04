@@ -1,8 +1,8 @@
 
 
-![Logo](/images/logo-100x100.png)
+![Logo](../images/logo-100x100.png)
 
-[License](/license/)  - [Home](/)
+[License](../license/)  - [Home](../)
 
 # Security Policy
 

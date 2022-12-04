@@ -9,6 +9,12 @@
    	  "recipe_id" : "business1",
    	  "name": "Boilerplate Business website"
    	  
+   },
+   
+    {
+   	  "recipe_id" : "markdownsite",
+   	  "name": "Boilerplate website in markdown format"
+   	  
    }
   
   ]
