@@ -175,93 +175,115 @@ class exportSite
 
             };
 
+			
 			//Loop through images under images dir 
-            const imgtree = dirTree(global.pconfig.exportdir+"images", { extensions: /\.(jpg|png)$/ });
-
-            var farr = new Array();
-            prevUtilsObj.getFlatStructure(farr,imgtree.children);
-
-            var prms2 = new Array();
+			var prms2 = new Array();
 
             var webparr = new Array();
 
-            for(var h=0; h < farr.length; h++)
-            {
-              var obj = farr[h];
-
-              if(obj.path.includes(".png") || obj.path.includes(".jpg"))
-              {
-                var npath = obj.path.replace(".png",".webp");
-                npath = obj.path.replace(".jpg",".webp");
-
-                var narr = npath.split("/");
-                npath = npath.replace(narr[narr.length-1],"");
-
-                var opath = obj.path.replace(global.pconfig.exportdir,"");
-                webparr.push(opath);
-
-				//convert images to webp if possible
-                prms2.push(imageOptimizerObj.convertToWebP(obj.path,npath));
-
-
-              }
-
-            }
+			if(global.pconfig.optimize.webp == "false")
+			{
+				//stub
+			}
+			else
+			{
+	            const imgtree = dirTree(global.pconfig.exportdir+"images", { extensions: /\.(jpg|png)$/ });
+	
+	            var farr = new Array();
+	            prevUtilsObj.getFlatStructure(farr,imgtree.children);
+	
+	            for(var h=0; h < farr.length; h++)
+	            {
+	              var obj = farr[h];
+	
+	              if(obj.path.includes(".png") || obj.path.includes(".jpg"))
+	              {
+	                var npath = obj.path.replace(".png",".webp");
+	                npath = obj.path.replace(".jpg",".webp");
+	
+	                var narr = npath.split("/");
+	                npath = npath.replace(narr[narr.length-1],"");
+	
+	                var opath = obj.path.replace(global.pconfig.exportdir,"");
+	                webparr.push(opath);
+	
+					//convert images to webp if possible
+	                prms2.push(imageOptimizerObj.convertToWebP(obj.path,npath));
+	
+	
+	              }
+	
+	            }
+			}
 
 			//on completion all image optimizations
             Promise.all(prms2).then(function(){
 
-			   //loop through all js files under STATIC folder
-               const jstree = dirTree(global.pconfig.exportdir+"js/internal", { extensions: /\.js/ });
+				if(global.pconfig.optimize.minify_js == "false")
+				{
+					//stub
+				}
+				else
+				{
+				   //loop through all js files under STATIC folder
+	               const jstree = dirTree(global.pconfig.exportdir+"js/internal", { extensions: /\.js/ });
+	
+	                for(var h=0; h < jstree.children.length; h++)
+	                {
+	                  var obj = jstree.children[h];
+	
+					  //minimize the js files one by one
+	                  fs.writeFileSync(obj.path, UglifyJS.minify({
+	                    "file.js": fs.readFileSync(obj.path, "utf8")
+	                  }, options).code, "utf8");
+	
+	
+	                  console.log("Minifying JS: "+obj.path);
+	
+	                }
+				}
+				
+				if(global.pconfig.optimize.minify_css == "false")
+				{
+					//stub
+				}
+				else
+				{
 
-                for(var h=0; h < jstree.children.length; h++)
-                {
-                  var obj = jstree.children[h];
-
-				  //minimize the js files one by one
-                  fs.writeFileSync(obj.path, UglifyJS.minify({
-                    "file.js": fs.readFileSync(obj.path, "utf8")
-                  }, options).code, "utf8");
-
-
-                  console.log("Minifying JS: "+obj.path);
-
-                }
-
-				//loop through all css files under STATIC folder
-                const csstree = dirTree(global.pconfig.exportdir+"css/internal", { extensions: /\.css/ });
-
-
-                for(var h=0; h < csstree.children.length; h++)
-                {
-                    var obj = csstree.children[h];
-
-                    var cssf = fs.readFileSync(obj.path, "utf-8");
-
-                   for(var n=0; n < webparr.length; n++)
-                   {
-                      var replace = webparr[n];
-
-					  //replace any existing image files to webp
-                      var destplace = replace.replace(".jpg",".webp");
-                       destplace = replace.replace(".png",".webp");
-
-                      var re = new RegExp(replace,"g");
-                      cssf = cssf.replace(re,destplace)
-                    }
-
-				  //minify the css file
-                  var cssoutput = new cleanCSS({
-                    sourceMap: true
-                  }).minify(cssf);
-
-                  fs.writeFileSync(obj.path, cssoutput.styles);
-
-                  console.log("Minifying CSS: "+obj.path);
-
-
-                }
-
+					//loop through all css files under STATIC folder
+	                const csstree = dirTree(global.pconfig.exportdir+"css/internal", { extensions: /\.css/ });
+	
+	
+	                for(var h=0; h < csstree.children.length; h++)
+	                {
+	                    var obj = csstree.children[h];
+	
+	                    var cssf = fs.readFileSync(obj.path, "utf-8");
+	
+	                   for(var n=0; n < webparr.length; n++)
+	                   {
+	                      var replace = webparr[n];
+	
+						  //replace any existing image files to webp
+	                      var destplace = replace.replace(".jpg",".webp");
+	                       destplace = replace.replace(".png",".webp");
+	
+	                      var re = new RegExp(replace,"g");
+	                      cssf = cssf.replace(re,destplace)
+	                    }
+	
+					  //minify the css file
+	                  var cssoutput = new cleanCSS({
+	                    sourceMap: true
+	                  }).minify(cssf);
+	
+	                  fs.writeFileSync(obj.path, cssoutput.styles);
+	
+	                  console.log("Minifying CSS: "+obj.path);
+	
+	
+	                }
+				}
 
 			  //start sitemap xml
               sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';

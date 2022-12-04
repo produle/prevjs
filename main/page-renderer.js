@@ -70,15 +70,21 @@ class pageRenderer
                   }
 
 			  //minify html before export
-              html = minify(html, {
-                   removeComments:            true,
-                      collapseWhitespace:        true,
-                      collapseBooleanAttributes: true,
-                      removeAttributeQuotes:     true,
-                      removeEmptyAttributes:     true,
-                   minifyJS:                  true
-                });
-
+			 if(global.pconfig.optimize.minify_html == "false")
+			 {
+				//stub
+			 }
+			 else
+			 {
+	              html = minify(html, {
+	                   removeComments:            true,
+	                      collapseWhitespace:        true,
+	                      collapseBooleanAttributes: true,
+	                      removeAttributeQuotes:     true,
+	                      removeEmptyAttributes:     true,
+	                   minifyJS:                  true
+	                });
+			  }
 
 			  //write final html file to export directory set by user
               var opath = global.pconfig.exportdir+outpath;
@@ -134,6 +140,7 @@ class pageRenderer
 		
 		`;
 		
+		var wsstr = UglifyJS.minify(wsstr);
 		
 		var modHtml = prevUtilsObj.insertTag(wsstr, html);
 		

@@ -66,19 +66,6 @@ global.pconfig = new Object();
 
 global.app = express();
 
-//minification configuration
-global.app.use(minifyHTML({
-    override:      true,
-    exception_url: false,
-    htmlMinifier: {
-        removeComments:            true,
-        collapseWhitespace:        true,
-        collapseBooleanAttributes: true,
-        removeAttributeQuotes:     true,
-        removeEmptyAttributes:     true,
-        minifyJS:                  true
-    }
-}));
 
 //Set the view engine to ejs
 global.app.set('view engine', 'ejs');
@@ -217,6 +204,29 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--export" && process.a
 	argPresent = true;
 	console.log("Exporting site");
 	processRecipe(process.argv[3]);
+	
+	
+	//minification configuration
+	
+	if(global.pconfig.optimize.minify_html == "false")
+	{
+		//stub
+	}
+	else
+	{
+		global.app.use(minifyHTML({
+		    override:      true,
+		    exception_url: false,
+		    htmlMinifier: {
+		        removeComments:            true,
+		        collapseWhitespace:        true,
+		        collapseBooleanAttributes: true,
+		        removeAttributeQuotes:     true,
+		        removeEmptyAttributes:     true,
+		        minifyJS:                  true
+		    }
+		}));
+	}
 	
 	exportSiteObj.export();
 
