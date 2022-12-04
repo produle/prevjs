@@ -1,5 +1,7 @@
 # PrevJS
 
+[![MIT](https://img.shields.io/badge/license-mit-blue)](https://github.com/produle/prevjs/blob/main/LICENSE)
+
 ## About 
 PrevJS is a super-easy static website generator built on top of EJS templates. It's main goal is to build, optimize and deploy static websites with much less work.
 
