@@ -1,3 +1,6 @@
+![Logo](/assets/logos/logo-100x100.png)
+
+
 # PrevJS
 
 [![MIT](https://img.shields.io/badge/license-mit-blue)](https://github.com/produle/prevjs/blob/main/LICENSE)
