@@ -492,13 +492,15 @@ class pageRenderer
 						//Path matched with dynamic template
 						if(pageobj)
 						{
-							
+							 obj.urlpath = global.pconfig.local_url+"/";
+
 				 			 var ejspath = "templates/"+pageobj.tempname+"/template.ejs";
               				 
 							 //render page if data source is inline
               				 if(pageobj.page.source == "inline")
               				 {
 								 obj.data = pageobj.page.data;	
+							
 							
 								res.render(ejspath, {siteobj: obj}, function (err, html) {	
 									if(err)
