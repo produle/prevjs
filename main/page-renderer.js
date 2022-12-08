@@ -494,7 +494,7 @@ class pageRenderer
 						{
 							 obj.urlpath = global.pconfig.local_url+"/";
 
-				 			 var ejspath = "templates/"+pageobj.tempname+"/template.ejs";
+				 			 var ejspath = "TEMPLATES/"+pageobj.tempname+"/template.ejs";
               				 
 							 //render page if data source is inline
               				 if(pageobj.page.source == "inline")
@@ -524,7 +524,7 @@ class pageRenderer
 							if(pageobj.page.source == "jsonurl")
               				 {
 
-								prevUtilsObj.fetchPageData(pageobj.page.dataurl).then((pdata) => {
+								prevUtilsObj.fetchPageData(pageobj.page.dataurl,pageobj.tempname).then((pdata) => {
 								    
 								     obj.data = pdata;
 											

@@ -58,23 +58,56 @@ class prevUtils
     }
 
 	//utility function to get json data from URL. Used for dynamic templates
-	fetchPageData(dataurl)
+	fetchPageData(dataurl,tempname)
     {
 	
 	      return new Promise((resolve, reject) => {
+		
+				if(dataurl.includes("http"))
+				{
 	      
-	      		fetch(dataurl, { method: "Get" })
-			    .then(res => res.json())
-			    .then((json) => {
-			       	
-			 			resolve(json);
-			 
-			    }).
-				  catch(error => {
-				      reject(false);
-				}); 
+		      		fetch(dataurl, { method: "Get" })
+				    .then(res => res.json())
+				    .then((json) => {
+				       	
+				 			resolve(json);
+				 
+				    }).
+					  catch(error => {
+						 console.log(error)
+					      reject(false);
+					}); 
+				
+				}
+				else
+				{
+					var lpath = global.pconfig.localpath+"TEMPLATES/"+tempname+"/"+dataurl;
+					console.log(lpath)
+					if (fs.existsSync(lpath)) 
+					{
+				    	fs.readFile(lpath, "utf8", (err, jsonString) => {
+						  if (err) {
+						    console.log("File read failed: " + lpath, err);
+							reject(false);
+						    return;
+						  }
+				
+							var tempObj = JSON.parse(jsonString);
+							
+							resolve(tempObj);
+			
+						});
+					  	
+					}
+					else
+					{
+						reject(false);
+					}
+				}
+			
 	      
-	      });
+	      	});
+			
       
      }
 
