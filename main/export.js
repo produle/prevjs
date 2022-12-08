@@ -21,6 +21,7 @@ var minifyHTML = require('express-minify-html');
 var UglifyJS = require('uglify-js');
 var cleanCSS = require('clean-css');
 
+const path = require('path');
 const fs = require('fs');
 const fetch = require('node-fetch');
 
@@ -52,10 +53,10 @@ class exportSite
     	
 		return new Promise((resolve, reject) => {
 			
-			 if (fs.existsSync(templatepath+"/template.json")) {
-			    	fs.readFile(templatepath+"/template.json", "utf8", (err, jsonString) => {
+			 if (fs.existsSync(templatepath+path.sep+"template.json")) {
+			    	fs.readFile(templatepath+path.sep+"template.json", "utf8", (err, jsonString) => {
 					  if (err) {
-					    console.log("File read failed: " + templatepath+"/template.json", err);
+					    console.log("File read failed: " + templatepath+path.sep+"template.json", err);
 						resolve(false);
 					    return;
 					  }
@@ -67,7 +68,7 @@ class exportSite
 			  		  {
 							 var prms = new Array();
 						
-							var temparr = templatepath.split("/");
+							var temparr = templatepath.split(path.sep);
 							var tempname = temparr[temparr.length-1];
 						
 							//loop through all pages set inside template.json
@@ -81,7 +82,7 @@ class exportSite
                   				 
 								 var htmlfile = "index.html";
 							
-								 var ejspath = "templates/"+tempname+"/template.ejs";
+								 var ejspath = "templates"+path.sep+tempname+path.sep+"template.ejs";
 															
 								 console.log("Compiling template for: "+page.path );
 							
@@ -107,7 +108,7 @@ class exportSite
 								if(page.source == "jsonurl")
                   				 {
 								    //fetch the json from the url
-									prms.push(prevUtilsObj.fetchPageData(page.dataurl).then((pdata) => {
+									prms.push(prevUtilsObj.fetchPageData(page.dataurl,tempname).then((pdata) => {
 									    
 									     obj.data = pdata;
 																		
@@ -229,7 +230,7 @@ class exportSite
 				   //loop through all js files under STATIC folder
 	
 				   var jstree = new Array();
-				   prevUtilsObj.getAllFiles(global.pconfig.exportdir+"js/internal",jstree,[".js"]);
+				   prevUtilsObj.getAllFiles(global.pconfig.exportdir+"js"+path.sep+"internal",jstree,[".js"]);
 
 	                for(var h=0; h < jstree.length; h++)
 	                {
@@ -260,7 +261,7 @@ class exportSite
 					//loop through all css files under STATIC folder
 	
 					var csstree = new Array();
-				   prevUtilsObj.getAllFiles(global.pconfig.exportdir+"css/internal",csstree,[".css"]);
+				   prevUtilsObj.getAllFiles(global.pconfig.exportdir+"css"+path.sep+"internal",csstree,[".css"]);
 	
 	
 	                for(var h=0; h < csstree.length; h++)
@@ -316,7 +317,7 @@ class exportSite
 
                 var hpath = obj.replace(global.pconfig.localpath,"")
 
-                var hpathArr = hpath.split("/");
+                var hpathArr = hpath.split(path.sep);
 
                 var ejsfile = hpathArr[hpathArr.length-1];
 
@@ -336,7 +337,7 @@ class exportSite
  					outpath = outpath.replace(ejsfile,"");
                 }
 
-				var exportpatharr = global.pconfig.exportdir.split("/");
+				var exportpatharr = global.pconfig.exportdir.split(path.sep);
 				var exportfolder = exportpatharr[exportpatharr.length-2];
 				
 

@@ -41,9 +41,9 @@ class createSite
 	
 			global.pconfig.createdir = global.pconfig.createdir.replace(/\/$/, '');
 	
-			fs.mkdirSync(global.pconfig.createdir+"/prevjs-site");
+			fs.mkdirSync(global.pconfig.createdir+path.sep+"prevjs-site");
 			
-			var fpath = global.pconfig.createdir+"/prevjs-site";
+			var fpath = global.pconfig.createdir+path.sep+"prevjs-site";
 			
 			if (!fs.existsSync(global.pconfig.createdir)) {
 	         

@@ -92,7 +92,7 @@ class pageRenderer
 				
 				
 							
-				var patharr = mdpath.split("/");
+				var patharr = mdpath.split(path.sep);
 				
 				var level = self.getLevel(patharr);
 				
@@ -128,7 +128,7 @@ class pageRenderer
 
               if(opath != "")
               {
-                opath = opath + "/";
+                opath = opath + path.sep;
               }
 
                fs.writeFileSync(opath+htmlfile, html);
@@ -161,7 +161,7 @@ class pageRenderer
 
               if (err) {
               //console.log(outpath + "  " +err);
-			 console.log("Error rendering " + outpath);
+			 console.log("Error rendering " + ejspath);
               resolve(true);
               }
               else {
@@ -193,7 +193,7 @@ class pageRenderer
 
               if(opath != "")
               {
-                opath = opath + "/";
+                opath = opath + path.sep;
               }
 
                fs.writeFileSync(opath+htmlfile, html);
@@ -443,10 +443,10 @@ class pageRenderer
 
 								var templatepath = obj.path;
 								
-								if (fs.existsSync(templatepath+"/template.json")) {
+								if (fs.existsSync(templatepath+path.sep+"template.json")) {
 						    	
 									
-								  var jsonString = fs.readFileSync(templatepath+"/template.json", "utf8");
+								  var jsonString = fs.readFileSync(templatepath+path.sep+"template.json", "utf8");
 								  
 						
 								  var tempObj = JSON.parse(jsonString);
@@ -455,7 +455,7 @@ class pageRenderer
 								  if(tempObj.generate == true || tempObj.generate == "true")
 						  		  {
 									
-										var temparr = templatepath.split("/");
+										var temparr = templatepath.split(path.sep);
 										var tempname = temparr[temparr.length-1];
 									
 										for(var p=0;p<tempObj.pages.length;p++)
@@ -494,7 +494,7 @@ class pageRenderer
 						{
 							 obj.urlpath = global.pconfig.local_url+"/";
 
-				 			 var ejspath = "TEMPLATES/"+pageobj.tempname+"/template.ejs";
+				 			 var ejspath = "TEMPLATES"+path.sep+pageobj.tempname+path.sep+"template.ejs";
               				 
 							 //render page if data source is inline
               				 if(pageobj.page.source == "inline")

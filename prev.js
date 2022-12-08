@@ -111,7 +111,7 @@ function processRecipe(recipe)
 			global.pconfig.production_url = "http://localhost:"+global.pconfig.port;
 			
 			if(!global.pconfig.exportdir)
-			global.pconfig.exportdir = global.pconfig.localpath+"out/";
+			global.pconfig.exportdir = global.pconfig.localpath+"out"+path.sep;
 			
 			if(!global.pconfig.createdir)
 			global.pconfig.createdir = recipe;			
@@ -168,6 +168,7 @@ if(process.argv.length == 4 && process.argv[2].trim() == "--run" && process.argv
 						//prune path variable from chokidar to match with browser client's address
 						path = path.replace(global.pconfig.localpath,"");
 						path = path.replace("/index.ejs","");
+						path = path.replace(path.sep+"index.ejs","");
 						path = path.replace("index.ejs","");
 						
 		    			client.send(path);
