@@ -160,7 +160,7 @@ class pageRenderer
           global.app.render(ejspath, {siteobj: obj}, function (err, html) {
 
               if (err) {
-              //console.log(outpath + "  " +err);
+              console.log(outpath + "  " +err);
 			 console.log("Error rendering " + ejspath);
               resolve(true);
               }

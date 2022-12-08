@@ -82,7 +82,7 @@ class prevUtils
 				else
 				{
 					var lpath = global.pconfig.localpath+"TEMPLATES/"+tempname+"/"+dataurl;
-					console.log(lpath)
+
 					if (fs.existsSync(lpath)) 
 					{
 				    	fs.readFile(lpath, "utf8", (err, jsonString) => {

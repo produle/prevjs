@@ -14,6 +14,12 @@
       "source": "jsonurl",
       "dataurl": "https://recipes.prevjs.com/examples/basic/article2.json"
     
+    },    
+    {
+      "path": "doc/article3",
+      "source": "jsonurl",
+      "dataurl": "localdata/article3.json"
+    
     }
   ]
 }

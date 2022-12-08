@@ -1,7 +1,7 @@
 {
   "name": "@produle/prevjs",
-  "version": "0.1.5",
-  "description": "Static website builder",
+  "version": "0.1.6",
+  "description": "Static website generator",
   "main": "prev.js",
   "scripts": {
     "test": "prev.js --run recipe.json"
