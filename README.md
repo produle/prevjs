@@ -22,11 +22,29 @@ PrevJS is a super-easy static website generator built on top of EJS templates. I
 * 😇 **Future-proof**, the code both in development and export is web native as it requires no special modifications or libraries (except ejs). Which means even in the un-likely event PrevJS is not maintained, your code will not go bust like other un-maintained site generators.
 * Ⓜ️ Supports **markdown websites** natively. Convert website with .md files to html along with styling and script. Example: https://prevjs.com
 
+# Prerequisites 
+
+## Software
+
+* Install nodejs and npm from http://nodejs.org/.  
+* (Optional - alternative to NPM) Yarn package manager, install https://yarnpkg.com/getting-started/install
+
+## Knowledge
+
+* Required: Basic HTML, CSS required for webpage designing
+* Optional: Knowledge of https://ejs.co/ templates is a big plus 
+* Optional: Jquery, Bootstrap would help a lot 
+* No knowledge required of any advanced application frameworks like react.  
+
 
 # How to use
 
 ## Step 1: Install prevjs CLI command from NPM registry
 ```npm install @produle/prevjs -g```
+
+(Optional - alternative to NPM) 
+Yarn command:
+```yarn --global add @produle/prevjs```
 
 ## Step 2: To create a very basic prevjs site (Optional)
 ```prevjs --create /path-to-where-my-website-folder-should-be/```
