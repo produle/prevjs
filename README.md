@@ -1,7 +1,5 @@
-![Logo](/assets/logos/logo-100x100.png)
+![Logo](/assets/logos/logo-150px.png)
 
-
-# PrevJS
 
 [![MIT](https://img.shields.io/badge/license-mit-blue)](https://github.com/produle/prevjs/blob/main/LICENSE)
 [![MockFlow](https://img.shields.io/badge/By-MockFlow-yellow)](https://mockflow.com)
