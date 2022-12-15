@@ -107,12 +107,20 @@ class exportSite
 								//If remote data with json url. First fetch the data and then render the page
 								if(page.source == "jsonurl")
                   				 {
+										var npath = page.path;		
+										
+									var fobj = new Object();
+									fobj.ejspath = ejspath;
+									fobj.npath = npath;
+									fobj.obj = obj;
+									fobj.htmlfile = htmlfile;
+									fobj.webparr = webparr;
+										
 								    //fetch the json from the url
-									prms.push(prevUtilsObj.fetchPageData(page.dataurl,tempname).then((pdata) => {
+									prms.push(prevUtilsObj.fetchPageData(page.dataurl,tempname,fobj).then((pdata) => {
 									    
-									     obj.data = pdata;
-																		
-		                 				 prms.push(pageRendererObj.renderPage(ejspath,page.path,obj,htmlfile,webparr));
+											pdata.obj.data = pdata.data;
+		                 				 prms.push(pageRendererObj.renderPage(pdata.ejspath,pdata.npath,pdata.obj,pdata.htmlfile,pdata.webparr));
 								
 									}));
 									

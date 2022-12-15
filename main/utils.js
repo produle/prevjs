@@ -58,7 +58,7 @@ class prevUtils
     }
 
 	//utility function to get json data from URL. Used for dynamic templates
-	fetchPageData(dataurl,tempname)
+	fetchPageData(dataurl,tempname,fobj)
     {
 	
 	      return new Promise((resolve, reject) => {
@@ -70,12 +70,14 @@ class prevUtils
 				    .then(res => res.json())
 				    .then((json) => {
 				       	
-				 			resolve(json);
+							fobj.data = json;
+				 			resolve(fobj);
 				 
 				    }).
 					  catch(error => {
 						 console.log(error)
-					      reject(false);
+							fobj.data = "";
+					      reject(fobj);
 					}); 
 				
 				}
@@ -94,14 +96,16 @@ class prevUtils
 				
 							var tempObj = JSON.parse(jsonString);
 							
-							resolve(tempObj);
+							fobj.data = tempObj;
+							resolve(fobj);
 			
 						});
 					  	
 					}
 					else
 					{
-						reject(false);
+						fobj.data = "";
+						reject(fobj);
 					}
 				}
 			

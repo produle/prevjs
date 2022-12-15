@@ -151,6 +151,7 @@ class pageRenderer
   //Convert from ejs to html format - used for site export
   renderPage(ejspath,outpath,obj,htmlfile,webparr)
   {
+	
 	var self = this;
 	
       return new Promise((resolve, reject) => {
@@ -523,10 +524,13 @@ class pageRenderer
 							//render page if data source is remote json url
 							if(pageobj.page.source == "jsonurl")
               				 {
-
-								prevUtilsObj.fetchPageData(pageobj.page.dataurl,pageobj.tempname).then((pdata) => {
+								var fobj = new Object();
+								fobj.obj = obj;
+								fobj.surl = surl;
+								
+								prevUtilsObj.fetchPageData(pageobj.page.dataurl,pageobj.tempname,fobj).then((pdata) => {
 								    
-								     obj.data = pdata;
+								     fobj.obj.data = pdata.data;
 											
 									res.render(ejspath, {siteobj: obj}, function (err, html) {
 										if(err)
@@ -534,13 +538,13 @@ class pageRenderer
 											console.log("### START OF RENDER ERROR");
 											console.log(err);
 											console.log("### END OF RENDER ERROR");
-											console.log("Error displaying " + obj.urlpath+""+surl);
+											console.log("Error displaying " + fobj.obj.urlpath+""+fobj.surl);
 	      				    				res.status(500).send("Server error! Try again.");
 										}	
 										else
 										{
-											console.log("...template: "+ surl);
-											res.send(self.modifyHTML(html,surl));
+											console.log("...template: "+ fobj.surl);
+											res.send(self.modifyHTML(html,fobj.surl));
 										}							
 								 
 									});						
