@@ -42,6 +42,7 @@ const prevUtilsObj = new prevUtils();
 
 //global sitemap variable used during export for forming sitemap.xml file
 var sitemap = "";
+var searchIndex = new Object();
 
 class exportSite
 {
@@ -86,15 +87,25 @@ class exportSite
 															
 								 console.log("Compiling template for: "+page.path );
 							
+								var pagepath = global.pconfig.production_url+"/"+page.path;
+							
 								 //form sitemap.xml
 				                  var sval = "<url>\n";
-				                  sval = sval + "<loc>"+global.pconfig.production_url+"/"+page.path+"</loc>\n";
+				                  sval = sval + "<loc>"+pagepath+"</loc>\n";
 				
 				                  var date = new Date().toISOString();
 				                  sval = sval + "<lastmod>"+date+"</lastmod>\n";
 				                  sval = sval + "</url>\n";
 
 								 sitemap = sitemap + sval;
+							
+								 if(global.pconfig.searchEnabled)
+								 {
+									var pageIndx = new Object();
+									pageIndx.url = pagepath;
+									
+									searchIndex.pages.push(pageIndx);
+								 }
                   				 
 								 //If inline data source, then just get the data and render the page
                   				 if(page.source == "inline")
@@ -161,6 +172,9 @@ class exportSite
 		var self = this;
 		
        var prms = new Array();
+
+		 if(global.pconfig.searchEnabled)								 
+		searchIndex.pages = new Array();
 
 	     //Refresh output directory before export
         if (fs.existsSync(global.pconfig.exportdir)) {

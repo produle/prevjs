@@ -104,6 +104,16 @@ function processRecipe(recipe)
 			if(!global.pconfig.port)
 			global.pconfig.port = 3000;
 			
+			global.pconfig.searchEnabled = false;
+			
+			if(global.pconfig.search)
+			{
+				if(global.pconfig.search.indexing)
+				{
+					global.pconfig.searchEnabled = true;
+				}
+			}			
+			
 			//local path of website folder
 			global.pconfig.localpath = recipe.replace("recipe.json","");			
 			

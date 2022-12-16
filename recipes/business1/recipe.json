@@ -12,6 +12,10 @@
     "minify_css": "true",
     "minify_html": "true"
   },
+  "search":
+  {
+  	 "indexing": "true"
+  },
   "deploy": {
     "domain": "https://prevjs.com",
     "type": "aws",
