@@ -25,6 +25,7 @@ const path = require('path');
 const fs = require('fs');
 const fetch = require('node-fetch');
 
+
 //### end of required external libraries
 
 //### start of required internal classes
@@ -42,7 +43,7 @@ const prevUtilsObj = new prevUtils();
 
 //global sitemap variable used during export for forming sitemap.xml file
 var sitemap = "";
-var searchIndex = new Object();
+global.searchIndex = new Object();
 
 class exportSite
 {
@@ -99,13 +100,6 @@ class exportSite
 
 								 sitemap = sitemap + sval;
 							
-								 if(global.pconfig.searchEnabled)
-								 {
-									var pageIndx = new Object();
-									pageIndx.url = pagepath;
-									
-									searchIndex.pages.push(pageIndx);
-								 }
                   				 
 								 //If inline data source, then just get the data and render the page
                   				 if(page.source == "inline")
@@ -173,8 +167,7 @@ class exportSite
 		
        var prms = new Array();
 
-		 if(global.pconfig.searchEnabled)								 
-		searchIndex.pages = new Array();
+		
 
 	     //Refresh output directory before export
         if (fs.existsSync(global.pconfig.exportdir)) {
@@ -184,7 +177,12 @@ class exportSite
 
          fs.mkdirSync(global.pconfig.exportdir);
 
-
+		if(global.pconfig.searchEnabled)	
+		{
+			fs.mkdirSync(global.pconfig.exportdir+"data");							 
+			global.searchIndex.pages = new Array();
+		}
+		
           //copy all static files to output folder
           ncp(global.pconfig.localpath+'STATIC', global.pconfig.exportdir,
                   function (err) {
@@ -417,6 +415,9 @@ class exportSite
 					//write sitemap.xml at the end
               		sitemap = sitemap + '</urlset>';
               		fs.writeFileSync(global.pconfig.exportdir+"sitemap.xml", sitemap);
+
+					fs.writeFileSync(global.pconfig.exportdir+"data"+"/index.json", JSON.stringify(global.searchIndex, null, 2));
+
 
                   console.log("Exported to " + global.pconfig.exportdir);
                   process.exit();

@@ -14,6 +14,7 @@ Used for previewing ejs file in browser
 //### start of required external libraries
 
 const dirTree = require("directory-tree");
+const cheerio = require('cheerio');
 
 const express = require('express');
 const path = require('path');
@@ -186,6 +187,45 @@ class pageRenderer
 	                   minifyJS:                  true
 	                });
 			  }
+	
+			  if(global.pconfig.searchEnabled)
+			 {
+				try
+				{
+					var pagepath = global.pconfig.production_url+"/"+outpath;
+
+					var pageIndx = new Object();
+					pageIndx.url = pagepath;
+					
+					var $ = cheerio.load(html);
+					
+					try
+					{
+					pageIndx.title = $("title").text();
+					
+					}catch(e){pageIndx.title="";}
+					
+					try
+					{
+					pageIndx.description = $('meta[name="description"]').attr('content');
+					
+					}catch(e){pageIndx.description="";}
+					
+					try
+					{
+					pageIndx.keywords = $('meta[name="keywords"]').attr('content');
+					
+					}catch(e){pageIndx.keywords="";}
+					
+				
+					global.searchIndex.pages.push(pageIndx);
+				}
+				catch(e)
+				{
+					
+				}
+				
+			 }
 
 			  //write final html file to export directory set by user
               var opath = global.pconfig.exportdir+outpath;
