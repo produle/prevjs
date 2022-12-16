@@ -236,7 +236,7 @@ class pageRenderer
 				     
 						//TODO need more precise rendering
 						//if(prevjs_localpathvar == event.data)
-				     	location.reload();
+				     	location.reload(true);
 				     	
 				    };
 	
@@ -353,6 +353,8 @@ class pageRenderer
       			obj.urlpath = global.pconfig.local_url+"/";
 
 				//expressjs response render in server
+				res.set('Cache-control', `no-store`);
+
       			 res.render(surl, {siteobj: obj}, function (err, html) {
 	
 
