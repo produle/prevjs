@@ -55,6 +55,9 @@ class exportSite
     	
 		return new Promise((resolve, reject) => {
 			
+			var templateIndex = new Object();
+			templateIndex.pages = new Array();
+			
 			 if (fs.existsSync(templatepath+path.sep+"template.json")) {
 			    	fs.readFile(templatepath+path.sep+"template.json", "utf8", (err, jsonString) => {
 					  if (err) {
@@ -99,12 +102,15 @@ class exportSite
 				                  sval = sval + "</url>\n";
 
 								 sitemap = sitemap + sval;
-							
+								
                   				 
 								 //If inline data source, then just get the data and render the page
                   				 if(page.source == "inline")
                   				 {
-									 obj.data = page.data;								
+									 obj.data = page.data;	
+								
+									 self.getSeachData(templateIndex,tempObj,obj,pagepath);
+								
 									 
 	                 				 prms.push(pageRendererObj.renderPage(ejspath,page.path,obj,htmlfile,webparr));
 								}
@@ -125,6 +131,10 @@ class exportSite
 									prms.push(prevUtilsObj.fetchPageData(page.dataurl,tempname,fobj).then((pdata) => {
 									    
 											pdata.obj.data = pdata.data;
+											
+										  var spagepath = global.pconfig.production_url+"/"+pdata.npath;
+										  self.getSeachData(templateIndex,tempObj,pdata,spagepath);
+
 		                 				 prms.push(pageRendererObj.renderPage(pdata.ejspath,pdata.npath,pdata.obj,pdata.htmlfile,pdata.webparr));
 								
 									}));
@@ -138,6 +148,10 @@ class exportSite
 							
 							//On completetion of all the pages inside the template.json of this template
 							 Promise.all(prms).then(function(){
+								
+								if(tempObj.search && tempObj.search.indexing && tempObj.search.fields)
+								fs.writeFileSync(global.pconfig.exportdir+"data"+"/"+tempname+".json", JSON.stringify(templateIndex, null, 2));
+
 								
 								resolve(true);
 							
@@ -158,6 +172,29 @@ class exportSite
 		
 		});	
 	};
+	
+	getSeachData(templateIndex,tempObj,obj,pagepath)
+    {
+		if(tempObj.search && tempObj.search.indexing && tempObj.search.fields)
+		 {
+			 var pageIndx = new Object();
+	 		 pageIndx.url = pagepath;
+	
+			 for(var j=0;j <  tempObj.search.fields.length; j++)
+			 {
+				 var sdata = obj.data[tempObj.search.fields[j]];
+			
+				if(sdata)
+				{
+					pageIndx[tempObj.search.fields[j]] = sdata;
+					
+				}	
+			 }
+		
+			templateIndex.pages.push(pageIndx);
+		 }						
+									 
+	}
 	
 	//Utility functio
 	//main export function which is the call of entry

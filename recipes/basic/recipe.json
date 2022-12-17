@@ -6,11 +6,11 @@
   "production_url": "https://website.com",
   
    "optimize": {
-    "prefetch_pages": "true",
-    "webp": "true",
-    "minify_js": "true",
-    "minify_css": "true",
-    "minify_html": "true"
+    "prefetch_pages": true,
+    "webp": true,
+    "minify_js": true,
+    "minify_css": true,
+    "minify_html": true
   },
   "deploy": {
     "domain": "https://prevjs.com",

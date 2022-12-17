@@ -1,5 +1,14 @@
 {
   "generate": true,
+  "search":
+  {
+  	 "indexing": true,
+  	 "fields": [
+  	 	"title",
+  	 	"post"
+  	 ]
+  	 
+  },
   "pages": [
     {
       "path": "doc/article1",
